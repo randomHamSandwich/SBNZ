@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kmodule xmlns="http://jboss.org/kie/6.0.0/kmodule">
+	<kbase name="rules" packages="rules">
+		<ksession name="ksession-rules" />
+	</kbase>
+
+	<kbase name="rulesIzveshtaji" packages="izveshtaji">
+		<ksession name="ksession-rulesIzveshtaji" />
+	</kbase>
+	
+		<kbase name="rulesQ" packages="query">
+		<ksession name="ksession-Querry" />
+	</kbase>
+
+	<kbase name="cepConfigKbase" eventProcessingMode="stream"
+		packages="cep2">
+		<ksession name="cepConfigKsessionPseudoClock"
+			clockType="pseudo" />
+		<ksession name="cepConfigKsessionRealtimeClock"
+			clockType="realtime" />
+	</kbase>
+</kmodule>

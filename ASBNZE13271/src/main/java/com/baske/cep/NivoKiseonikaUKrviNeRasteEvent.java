@@ -1,0 +1,23 @@
+package com.baske.cep;
+
+import java.io.Serializable;
+
+import org.kie.api.definition.type.Expires;
+import org.kie.api.definition.type.Role;
+
+@Role(Role.Type.EVENT)
+@Expires("15m")
+public class NivoKiseonikaUKrviNeRasteEvent implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -807894012198942302L;
+
+	public NivoKiseonikaUKrviNeRasteEvent() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+
+}

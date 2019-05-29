@@ -1,0 +1,81 @@
+//created on: Apr 15, 2019
+package com.baske
+
+//list any import classes here.
+import com.baske.model.*
+import java.util.Set
+import java.util.List
+import java.time.LocalDate
+
+
+//declare any global variables here
+global Bolest dijabetes;
+global Bolest hipertenzija;
+
+
+
+rule "dijabetes moze biti"
+agenda-group "druga"
+salience 100 
+//moraju svi biti ispunjeni ali moze biti i drugih simptoma nije zabranjeo tj nije receno
+    when
+        $p: Pregled( $sim : simptomi  , $mogucaB : moguceBolesti ) and
+        $sss : Set() from collect($s : Simptomi( 
+        	this == Simptomi.CESTO_URINIRANJE ||
+        	this == Simptomi.GUBITAK_TELESNE_TEZINE ||
+        	this == Simptomi.ZAMOR ||
+        	this == Simptomi.MUCNINA_I_POVRACANJE
+         )from $sim) and
+         eval($sss.size() >=4)
+         
+         //and
+         $dajMiBolest : MogucaBolest(  naziv =="dijabetes") from $mogucaB
+         
+         
+    then
+        System.out.println("dijabetes: "  + $sss.size()+ "/4 poklapanja "  +$sss.size()/4.0);
+
+		$dajMiBolest.setMogucnost($sss.size()/4.0);
+		System.out.println($p.getMoguceBolesti().toString()+"\n");
+		
+		//ne dodajemo mi prepisanu terapiju to radi ekspicitno lekar
+		//PrepisanaTerapija t = new PrepisanaTerapija(dijabetes,null,null,null);
+		//$p.getPacient().getTerapije().add(t);
+		
+		//int temp = $p.getPacient().getTerapije().size();
+		//System.out.println("\ndijabetes: \n"+$p.getPacient().getTerapije().
+		//	get(temp-1).getBolest().toString()+"\n");
+
+end
+
+rule "hipertenzija moze biti"
+agenda-group "druga"
+salience 90
+    when
+        $p : Pregled($pac :pacient ,  $mogucaB : moguceBolesti )
+		$pacient : Pacient( this == $pac, $ter:terapije  ) from $pac
+				$l: List (size >=10 ) from collect ($ppppp : PrepisanaTerapija( 
+				// ne bilo koja visokPritisak vec samo ako je u oviru 6 meseci
+				//visokPritisak  
+				uPosednjihSestMesecBarDesetPutaVisokPritisak()
+		 	)from $ter) 
+		 $dajMiBolest : MogucaBolest(  naziv =="hipertenzija") from $mogucaB
+		 	
+    then
+    //TODO proveri da je u zadnjih 6 meseci
+       	System.out.println("hipertenzija: ima "  + $l.size()+ "/10 puta zabelezen pritisak mora biti barem 10 u 6 meseci  "  +1.0);
+	
+		$dajMiBolest.setMogucnost(1);
+		System.out.println($p.getMoguceBolesti().toString()+"\n");
+		
+		//ne dodajemo mi prepisanu terapiju to radi ekspicitno lekar
+		//PrepisanaTerapija t = new PrepisanaTerapija(hipertenzija, null,null,null);	
+		//$p.getPacient().getTerapije().add(t);
+		
+		//int temp = $p.getPacient().getTerapije().size();
+		//System.out.println("\nhipertenzija: \n"+$p.getPacient().getTerapije().
+		//	get(temp-1).getBolest().toString()+"\n");
+		
+		
+
+end

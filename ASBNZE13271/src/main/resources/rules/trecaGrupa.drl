@@ -1,0 +1,225 @@
+//created on: Apr 15, 2019
+package com.baske
+//list any import classes here.
+import com.baske.model.*
+import java.util.Set
+import java.util.List
+import java.time.LocalDate
+//declare any global variables here
+global Bolest prehlada;
+global Bolest groznica;
+global Bolest upalaKrajnika;
+global Bolest sinusnaInfekcija;
+global Bolest hronicnaBubreznaBolest;
+global Bolest akutnaBubreznaBolest;
+global Bolest hipertenzija;
+global Bolest dijabetes;
+
+
+
+rule "bolovanje od hipertenzije vishe od 6 meseci"
+agenda-group "treca"
+salience 330
+	when
+		$p : Pregled($pac :pacient )
+		$pacient : Pacient( this == $pac, $ter:terapije  ) from $pac
+		$l: List (size >0 ) from collect ($ppppp:PrepisanaTerapija( 
+			bolest.nazivBolesti =="hipertenzija" ,
+			$ppppp.getDatumPrepisaneTerapiej().isBefore(LocalDate.now().minusMonths(6))
+		 	)from $ter) 
+
+ 	then
+		System.out.println($l);
+		//dodaj da imamo SPECIJALNI simpton bolovanje od hipertenzije vishe od 6 meseci
+		$p.getSpecificniSimptomi().add(SpecificanSimptom.PACIENT_BOLUJE_OD_HIPERTENZIJE_VISE_OD_6_MESECI );
+		
+end
+
+rule "boluje od dijabetesa"
+agenda-group "treca"
+salience 330
+	when
+		$p : Pregled($pac :pacient )
+		$pacient : Pacient( this == $pac, $ter:terapije  ) from $pac
+		$l: List (size >0 ) from collect ($ppppp:PrepisanaTerapija( 
+			(bolest.nazivBolesti =="dijabetes" ) 
+		 	)from $ter) 
+
+ 	then
+		System.out.println($l);
+		System.out.println("xxxxxxxxxxxxxxxXXXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxx\n");
+		//dodaj da imamo SPECIJALNI simpton bolovanje od hipertenzije vishe od 6 meseci
+		$p.getSpecificniSimptomi().add(SpecificanSimptom.PACIENT_BOLUJE_OD_DIJABETESA);
+		
+end
+
+rule "poslednjih 14 dana dijagnostikovana boles koja kao simptom ima povecanu telestnu temperaturu"
+agenda-group "treca"
+salience 330
+	when
+		$p : Pregled($pac :pacient )
+		$pacient : Pacient( this == $pac, $ter:terapije  ) from $pac
+		$l: List (size >0 ) from collect ($ppppp:PrepisanaTerapija( 
+			//temperatur > 38.0 && uPoslednjih14Dana()  
+			(	 uPoslednjih14Dana() &&
+					((bolest.simptomi contains (Simptomi.TEMPERATURA_OD_40_DO_41) ) ||
+					(bolest.simptomi contains (Simptomi.TEMPERATURA_VECA_OD_38)))
+			)
+		 	)from $ter) 
+
+ 	then
+ 		System.out.println("poslednjih 14 dana povishena tempertatura " );
+		System.out.println($l+"\n");
+		//dodaj da imamo SPECIJALNI simpton bolovanje od hipertenzije vishe od 6 meseci
+		$p.getSpecificniSimptomi().add(SpecificanSimptom.U_POSLEDNJIH_14_DAN_POVISENA_TEMPERATURA);
+		
+end
+
+rule "poslednjih 21 primao antibiotike"
+agenda-group "treca"
+salience 330
+	when
+		$p : Pregled($pac :pacient )
+		$pacient : Pacient( this == $pac, $ter:terapije  ) from $pac
+
+		 $zzzzzzz : PrepisanaTerapija( $prepisaniLekovi:prepisaniLekovi, uPoslednjih21Dana()  )from $ter
+		 $l : List(size>0) from collect (
+		 	Lek( jeAntibiotik())
+		 from $prepisaniLekovi ) 
+
+ 	then
+ 		System.out.println("pacijent je primo Antibotik" + $zzzzzzz);
+		//dodaj da imamo SPECIJALNI simpton bolovanje od hipertenzije vishe od 6 meseci
+		$p.getSpecificniSimptomi().add(SpecificanSimptom.U_POSLEDNJIH_21_DAN_PREPISANI_ANTIBIOTICI);
+		
+end
+
+
+rule "hronicnaBubreznaBolest moze biti"
+agenda-group "treca"
+salience 300
+    when
+        $p : Pregled( $sim :  simptomi, $mogucaB : moguceBolesti, $specSimpt : specificniSimptomi   )  and
+		$sss : Set() from collect($s : Simptomi(
+			this== Simptomi.ZAMOR ||
+			this== Simptomi.NOCTURIA ||
+			this== Simptomi.OTOCI_NOGU_I_ZGLOBOVA ||
+			this== Simptomi.GUSENJE ||
+			this== Simptomi.BOL_U_GRUDIMA
+			
+		 ) from $sim) and
+		 eval($sss.size() >=2)
+		 $sSpec :Set() from collect ( $spSim : SpecificanSimptom( 
+		 	this== SpecificanSimptom.PACIENT_BOLUJE_OD_DIJABETESA ||
+		 	this== SpecificanSimptom.PACIENT_BOLUJE_OD_HIPERTENZIJE_VISE_OD_6_MESECI 
+		  )
+		 from $specSimpt) and
+		 eval($sSpec.size() >=1) and
+		 $dajMiBolest : MogucaBolest(  naziv =="hronicnaBubreznaBolest") from $mogucaB
+    then
+        System.out.println("hronicnaBubreznaBolest:       "  + $sss.size()+ "/5 poklapanja "  +$sss.size()/5.0);
+        System.out.println("specificni simptomi poklanje: "  + $sSpec.size()+ "/2 poklapanja "  +$sSpec.size()/2.0);
+        //specijalne simptome brojimo kao 2 obicna jer su jaci indikaor bolesti
+        $dajMiBolest.setMogucnost(  ($sss.size()+2*$sSpec.size())/9.0  );
+        System.out.println($p.getMoguceBolesti().toString()+"\n");
+        
+
+end
+
+rule "akutnaBubreznaBolest moze biti"
+agenda-group "treca"
+salience 300
+    //include attributes such as "salience" here...
+    when
+	    $p : Pregled( $sim :  simptomi, $mogucaB : moguceBolesti, $specSimpt : specificniSimptomi   )  and
+		$sss : Set() from collect($s : Simptomi(
+			this== Simptomi.ZAMOR ||
+			this== Simptomi.GUSENJE ||
+			this== Simptomi.OTOCI_NOGU_I_ZGLOBOVA ||
+			this== Simptomi.DIJAREJA
+			
+		 ) from $sim) and
+		 eval($sss.size() >=2)
+		 $sSpec :Set() from collect ( $spSim : SpecificanSimptom( 
+		 	this== SpecificanSimptom.OPORAVLJA_SE_OD_OPERACIJE ||
+		 	this== SpecificanSimptom.U_POSLEDNJIH_14_DAN_POVISENA_TEMPERATURA ||
+		 	this== SpecificanSimptom.U_POSLEDNJIH_21_DAN_PREPISANI_ANTIBIOTICI  
+		  )
+		 from $specSimpt) and
+		 eval($sSpec.size() >=1) and
+		 $dajMiBolest : MogucaBolest(  naziv =="akutnaBubreznaBolest") from $mogucaB
+		 
+    then
+       	System.out.println("akutnaBubreznaBolest:       "  + $sss.size()+ "/4 poklapanja "  +$sss.size()/4.0);
+        System.out.println("specificni simptomi poklanje: "  + $sSpec.size()+ "/3 poklapanja "  +$sSpec.size()/3.0);
+        //specijalne simptome brojimo kao 2 obicna jer su jaci indikaor bolesti
+        $dajMiBolest.setMogucnost(  ($sss.size()+2*$sSpec.size())/10.0  );
+        System.out.println($p.getMoguceBolesti().toString()+"\n");
+
+end
+
+
+rule "nadji najbolu mogucnost za trecu grupu"
+agenda-group "treca"
+salience 200
+	when
+		$p :Pregled( $mog : moguceBolesti    )
+		$n: Double(doubleValue>=0.0) from accumulate(
+			$m:MogucaBolest( $mm:mogucnost ) 
+			from $mog,
+			max($mm)
+		)
+	then
+		$p.setNajboljaProcenaBolesti($n);
+		System.out.println("najboljaProcena postavljena u pregled " + $p.getNajboljaProcenaBolesti()+"\n");
+end
+
+rule "da li je hronicnaBubreznaBolest"
+agenda-group "treca"
+salience 109
+enabled false
+	when
+		$p: Pregled( $mog: moguceBolesti , $pro : najboljaProcenaBolesti  )
+		$s : List(size >0) from collect( $m : MogucaBolest( mogucnost == $pro && naziv == hronicnaBubreznaBolest.getNazivBolesti()) from $mog
+		)
+	then
+
+		PrepisanaTerapija t = new PrepisanaTerapija(hronicnaBubreznaBolest,null,null,null);
+		$p.getPacient().getTerapije().add(t);
+		
+			int temp = $p.getPacient().getTerapije().size();
+			System.out.println("\nbolest koja je izabrana je hronicnaBubreznaBolest: \n"+$p.getPacient().getTerapije().
+			get(temp-1).getBolest().toString()+"\n");
+end
+
+
+rule "da li je akutnaBubreznaBolest"
+agenda-group "treca"
+enabled false
+salience 110
+	when
+		$p: Pregled( $mog: moguceBolesti , $pro : najboljaProcenaBolesti  )
+		$s : List(size >0) from collect( $m : MogucaBolest( mogucnost == $pro && naziv == akutnaBubreznaBolest.getNazivBolesti()) from $mog
+		)
+	then
+
+		PrepisanaTerapija t = new PrepisanaTerapija(akutnaBubreznaBolest,null,null,null);
+		$p.getPacient().getTerapije().add(t);
+		
+			int temp = $p.getPacient().getTerapije().size();
+			System.out.println("\nbolest koja je izabrana je akutnaBubreznaBolest: \n"+$p.getPacient().getTerapije().
+			get(temp-1).getBolest().toString()+"\n");
+end
+
+
+rule "print specificni simptomi"
+agenda-group "treca"
+salience -10
+enabled true
+	when 
+		$p:Pregled(  )
+	then
+	System.out.println($p.getSimptomi() +"\n"+$p.getSpecificniSimptomi());
+	//System.out.println($p.getPacient().getTerapije().get(0).getPrepisaniLekovi().get(0).getTipLeka());
+end
+

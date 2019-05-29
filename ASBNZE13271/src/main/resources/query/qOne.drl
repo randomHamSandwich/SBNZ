@@ -1,0 +1,267 @@
+//created on: May 28, 2019
+package com.baske
+import com.baske.model.*;
+import java.util.Set
+import java.util.List
+import com.sample.ProbaQuerry
+
+//list any import classes here.
+
+
+
+//declare any global variables here
+
+
+query isSimptomContainedInBolest(Simptomi simp, Bolest bolest)
+	SimptomBolest( simp, bolest; )
+	
+end
+
+rule "prikazi Specificne simp neke bolesti"
+salience 300
+agenda-group "prikaziSimptomeNekeBolesti"
+	when
+		$b : Bolest( $simSpec :specificniSimptomi != null
+		 )
+	then
+		 System.out.println($simSpec);
+end
+
+rule "prikazi sim neke bole"
+salience 200
+agenda-group "prikaziSimptomeNekeBolesti"
+	when
+		$b : Bolest( $sim:simptomi  )
+	then
+	 System.out.println($sim);
+		
+end
+
+
+
+
+rule "Your First Ruasdasdasdle"
+agenda-group "SimpUBolestima"
+enabled true
+no-loop
+salience -1200
+    when
+        $s:Simptomi(  )
+        $b : Bolest( $bNaziv : nazivBolesti  )
+		
+		$sbl : SimptomBolestList( $simBOlestiNum : simBolNum  )
+		$ssssssss : SimptomBolestNumber(bolest.simptomi contains $s , bolest.nazivBolesti ==$bNaziv) from $simBOlestiNum
+     
+     	//$list:List(size >0) from collect ($ssssssss : SimptomBolestNumber(bolest.simptomi contains $s , bolest.nazivBolesti ==$bNaziv) from $simBOlestiNum)
+     
+    then
+		System.out.println("simptom " +$s +" je u bolesti   "  +$b + "   "+ $ssssssss+"  \n") ;//+ $list.size());
+		$ssssssss.setBroj($ssssssss.getBroj()+1);
+	
+		//System.out.println("simptom " +$s +" je u bolesti   "  +$b + "   "+$list +"  ") ;//+ $list.size());
+		//update($sbl);
+		update($sbl);
+	//	delete($sbl);
+		//SimptomBolestList $aaa =$sbl;
+		
+		
+		
+end
+
+
+//prva grupa
+rule "sortiraj za prehlada"
+agenda-group "SimpUBolestima"
+no-loop
+salience $n
+	when
+		$sbl:SimptomBolestList( $simBOlestiNum : simBolNum  )
+		$ssssssss : SimptomBolestNumber( bolest.nazivBolesti =="prehlada", $n :broj)from $simBOlestiNum
+	then
+		System.out.println("prehlada                OVO RADIIIIIIIIIIIIIIIIII MOZDAxxxxxxxxx " + $n) ;//+ $list.size());
+end
+rule "sortiraj za groznica"
+agenda-group "SimpUBolestima"
+no-loop
+salience $n
+	when
+		$sbl:SimptomBolestList( $simBOlestiNum : simBolNum  )
+		$ssssssss : SimptomBolestNumber( bolest.nazivBolesti =="groznica", $n :broj)from $simBOlestiNum
+	then
+		System.out.println("groznica                OVO RADIIIIIIIIIIIIIIIIII MOZDAxxxxxxxxx " + $n) ;//+ $list.size());
+end
+rule "sortiraj za upalaKrajnika"
+agenda-group "SimpUBolestima"
+no-loop
+salience $n
+	when
+		$sbl:SimptomBolestList( $simBOlestiNum : simBolNum  )
+		$ssssssss : SimptomBolestNumber( bolest.nazivBolesti =="upalaKrajnika", $n :broj)from $simBOlestiNum
+	then
+		System.out.println("upalaKrajnika                OVO RADIIIIIIIIIIIIIIIIII MOZDAxxxxxxxxx " + $n) ;//+ $list.size());
+end
+rule "sortiraj za sinusnaInfekcija"
+agenda-group "SimpUBolestima"
+no-loop
+salience $n
+	when
+		$sbl:SimptomBolestList( $simBOlestiNum : simBolNum  )
+		$ssssssss : SimptomBolestNumber( bolest.nazivBolesti =="sinusnaInfekcija", $n :broj)from $simBOlestiNum
+	then
+		System.out.println("sinusnaInfekcija                OVO RADIIIIIIIIIIIIIIIIII MOZDAxxxxxxxxx " + $n) ;//+ $list.size());
+end
+
+
+
+//druga grupa-------------------------------------------------------------------------------------
+rule "sortiraj za dijabetes"
+agenda-group "SimpUBolestima"
+no-loop
+salience $n
+	when
+		$sbl:SimptomBolestList( $simBOlestiNum : simBolNum  )
+		$ssssssss : SimptomBolestNumber( bolest.nazivBolesti =="dijabetes", $n :broj)from $simBOlestiNum
+	then
+		System.out.println("dijabetes                OVO RADIIIIIIIIIIIIIIIIII MOZDAxxxxxxxxx " + $n) ;//+ $list.size());
+end
+
+
+
+rule "sortiraj za hipertenzija"
+agenda-group "SimpUBolestima"
+no-loop
+salience $n
+	when
+		$sbl:SimptomBolestList( $simBOlestiNum : simBolNum  )
+		$ssssssss : SimptomBolestNumber( bolest.nazivBolesti =="hipertenzija", $n :broj)from $simBOlestiNum
+	then
+		System.out.println("hipertenzija                OVO RADIIIIIIIIIIIIIIIIII MOZDAxxxxxxxxx " + $n) ;//+ $list.size());
+end
+
+
+
+
+
+
+//treca grupa-------------------------------------------------------------------------------------
+rule "sortiraj za hronicuBubreznuPovredu"
+agenda-group "SimpUBolestima"
+salience $n
+	when
+		$sbl:SimptomBolestList( $simBOlestiNum : simBolNum  )
+		$ssssssss : SimptomBolestNumber( bolest.nazivBolesti =="hronicnaBubreznaBolest", $n :broj)from $simBOlestiNum
+	then
+	System.out.println("hronicnaBubreznaBolest          OVO RADIIIIIIIIIIIIIIIIII MOZDAxxxxxxxxx " + $n) ;//+ $list.size());
+	
+end
+
+rule "sortiraj za akutnaBubreznaPovreda"
+agenda-group "SimpUBolestima"
+salience $n
+	when
+		$sbl:SimptomBolestList( $simBOlestiNum : simBolNum  )
+		$ssssssss : SimptomBolestNumber( bolest.nazivBolesti =="akutnaBubreznaBolest", $n :broj)from $simBOlestiNum
+	then
+	System.out.println("akutnaBubreznaBolest                OVO RADIIIIIIIIIIIIIIIIII MOZDAxxxxxxxxx " + $n) ;//+ $list.size());
+	
+end
+
+
+
+rule "asdsddddddssssu"
+agenda-group "SimpUBolestima"
+enabled false
+
+salience -1
+	when
+		$sbl:SimptomBolestList( $simBOlestiNum : simBolNum  )
+		$ssssssss : SimptomBolestNumber( $n :broj)from $simBOlestiNum
+	then
+	System.out.println("yyyyyyyyyyyyyy" +$ssssssss );
+end
+
+
+
+
+
+rule "Your First Ruasdasdasdle2342342342423234234223234234s prehl;ada"
+agenda-group "mozdaradiiiiiiiiiiiiiii"
+enabled false
+no-loop
+salience $list.size()
+    when
+        $s:Simptomi(  )
+		
+		$sbl : SimptomBolestList( $simBOlestiNum : simBolNum  )
+     	$list:List(size >0) from collect (
+     		$ssssssss : SimptomBolestNumber(bolest.simptomi contains $s , bolest.nazivBolesti =="prehlada")
+     	 	from $simBOlestiNum)
+     
+    then
+   	 	System.out.println("XXXXsimptom " +$s +" je u bolesti   prehlada    "+ $list.size()) ;//+ $list.size());
+	
+end
+
+rule "sortiraj za Ruasdasdasdle2342342342423234234223234234s akutnaBubreznaPovreda"
+agenda-group "mozdaradiiiiiiiiiiiiiii"
+salience $list.size()
+    when
+    
+    
+        $pQ : ProbaQuerry( $izabrani :izabraniSimptomi  )
+        
+	//Number() from accumulate(
+        $simptom : Simptomi(  ) from $izabrani 
+		
+		$sbl : SimptomBolestList( $simBOlestiNum : simBolNum  )
+     	$list:List() from collect (
+     		$ssssssss : SimptomBolestNumber(bolest.simptomi contains $simptom, 
+     		
+     		bolest.nazivBolesti =="akutnaBubreznaBolest")
+     	 	from $simBOlestiNum)
+     	 	
+      //	, count($list)
+   //  )
+    then
+   	 	//System.out.println("XXXXsimptom " +$s +" je u bolesti   akutnaBubreznaBolest    "+ $list.size()) ;//+ $list.size());
+		System.out.println("_________________________________________e ako ovo radi ubi me " + $list+ "___"+$list.size());
+end
+
+
+rule "sortiraj za Ruasdasdasdle2342342342423234234223234234s hronicuBubreznuPovredu"
+agenda-group "mozdaradiiiiiiiiiiiiiii"
+salience $list.size()
+    when
+        $s:Simptomi(  )
+		
+		$sbl : SimptomBolestList( $simBOlestiNum : simBolNum  )
+     	$list:List(size >0) from collect (
+     		$ssssssss : SimptomBolestNumber(bolest.simptomi contains $s , bolest.nazivBolesti =="hronicnaBubreznaBolest")
+     	 	from $simBOlestiNum)
+     
+    then
+   	 	System.out.println("XXXXsimptom " +$s +" je u bolesti   hronicuBubreznuPovredu    "+ $list.size()) ;//+ $list.size());
+	
+end
+
+
+
+
+
+
+
+
+
+
+
+rule "Your First Ruasdasdasdle222222222222222222"
+enabled false
+    when
+        $setSim: Simptomi(  )
+        isSimptomContainedInBolest($setSim,$SetBol;)
+    then
+       System.out.println("szzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz" +$setSim +" je u bolesti   " +$SetBol );
+
+end
+
+

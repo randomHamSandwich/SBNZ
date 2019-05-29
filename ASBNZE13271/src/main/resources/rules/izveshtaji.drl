@@ -1,0 +1,49 @@
+//created on: May 16, 2019
+package com.baske
+
+//list any import classes here.
+
+
+
+//declare any global variables here
+
+
+
+
+rule "Spisak pacijenata sa mogucim hronicnim oboljenjima"
+
+    when
+        //conditions
+        
+    then
+        //actions
+
+end
+
+rule "Spisak mogucih zavisnika"
+    //include attributes such as "salience" here...
+    when
+        //conditions
+    then
+        //actions
+
+end
+
+rule "Spisak pacijenata sa oslaboljenim imuniteteom"
+
+    when
+        //conditions
+    then
+        //actions
+
+end
+
+
+rule "Your First Rule"
+
+    when
+        //conditions
+    then
+        //actions
+
+end

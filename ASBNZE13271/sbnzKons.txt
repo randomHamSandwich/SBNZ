@@ -1,0 +1,4 @@
+moze kako jeste za pacijenta
+nije bitno crud za lekove
+bitno je smao sta je uradno memoriji
+disebluje dugem ako rezoner nije dobar ili ako je doshlo do promene nad listom yea
