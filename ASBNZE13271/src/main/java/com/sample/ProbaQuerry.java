@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.baske.model.Simptomi;
-
+@Depricated
 public class ProbaQuerry implements Serializable{
 	/**
 	 * 

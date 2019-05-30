@@ -1,7 +1,7 @@
 package com.baske.model;
 
 import java.io.Serializable;
-
+@Deprecated
 public class SimptomBolestNumber  implements Serializable{
 	/**
 	 * 

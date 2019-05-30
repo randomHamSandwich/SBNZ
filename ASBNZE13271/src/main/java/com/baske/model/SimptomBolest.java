@@ -1,6 +1,7 @@
 package com.baske.model;
 import org.kie.api.definition.type.Position;
 
+@Deprecated
 public class SimptomBolest {
 
     @Position(0)

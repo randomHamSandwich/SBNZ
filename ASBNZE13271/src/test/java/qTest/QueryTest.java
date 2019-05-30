@@ -90,33 +90,6 @@ public class QueryTest {
 		kSession.insert(akutnaBubreznaBolest);
 
 		
-	
-		SimptomBolestNumber nPrehlda = new SimptomBolestNumber(prehlada, 0);
-		SimptomBolestNumber nGroznica = new SimptomBolestNumber(groznica, 0);
-		SimptomBolestNumber nUpalaKrajnika = new SimptomBolestNumber(upalaKrajnika, 0);
-		SimptomBolestNumber nSinusnaInfekcija = new SimptomBolestNumber(sinusnaInfekcija, 0);
-		
-		SimptomBolestNumber nDijabetes = new SimptomBolestNumber(dijabetes, 0);
-		SimptomBolestNumber nHipertenzija= new SimptomBolestNumber(hipertenzija, 0);
-		
-		SimptomBolestNumber nHronicnaBubreznaBolest = new SimptomBolestNumber(hronicnaBubreznaBolest, 0);
-		SimptomBolestNumber nAkutnaBubreznaBolest = new SimptomBolestNumber(akutnaBubreznaBolest, 0);
-		ArrayList<SimptomBolestNumber> list = new ArrayList<>();
-		list.add(nPrehlda);
-		list.add(nGroznica);
-		list.add(nUpalaKrajnika);
-		list.add(nSinusnaInfekcija);
-		
-		list.add(nDijabetes);
-		list.add(nHipertenzija);
-		
-		list.add(nHronicnaBubreznaBolest);
-		list.add(nAkutnaBubreznaBolest);
-		
-		
-		SimptomBolestList bl = new  SimptomBolestList(list);
-		
-		kSession.insert(bl);
 		
 		//prehlada
 //		kSession.insert(Simptomi.CURENJE_IZ_NOSA);
@@ -184,16 +157,6 @@ public class QueryTest {
 //		kSession.insert(Simptomi.OTOCI_NOGU_I_ZGLOBOVA);
 //		kSession.insert(Simptomi.DIJAREJA);
 		
-		kSession.insert(nPrehlda);
-		kSession.insert(nGroznica);
-		kSession.insert(nUpalaKrajnika);
-		kSession.insert(nSinusnaInfekcija);
-		
-		kSession.insert(nDijabetes);
-		kSession.insert(nHipertenzija);
-		
-		kSession.insert(nHronicnaBubreznaBolest);
-		kSession.insert(nAkutnaBubreznaBolest);
 		
 		
 		kSession.insert(new JTextArea());

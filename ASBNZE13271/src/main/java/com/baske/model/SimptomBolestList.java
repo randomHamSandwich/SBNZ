@@ -2,7 +2,7 @@ package com.baske.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
+@Deprecated
 public class SimptomBolestList implements Serializable{
 	/**
 	 * 

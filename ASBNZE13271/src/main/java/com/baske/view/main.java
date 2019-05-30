@@ -503,7 +503,7 @@ public class main {
 //				System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 			}
 		});
-		
+		//simptomi koje ima ova bolest
 		df.getPrepisiTerapijuPanel().getDualListBoxPrepisaniLekovi().btnUpit.addActionListener(new ActionListener() {
 			
 			@Override
@@ -511,23 +511,42 @@ public class main {
 				// TODO Auto-generated method stub
 				
 				Bolest bolestSelektovana =(Bolest)df.getPrepisiTerapijuPanel().getCmbBolesti().getSelectedItem();
-				String sssTemp ="";
-				try {
-					HashSet<SpecificanSimptom> setSpecSim =	bolestSelektovana.getSpecificniSimptomi();
-					for(SpecificanSimptom s :setSpecSim) {
-						sssTemp+=s+"\n";	
-					}
-					
-				} catch (Exception e2) {
-					// TODO: handle exception
-				}
+//				String sssTemp ="";
+//				try {
+//					HashSet<SpecificanSimptom> setSpecSim =	bolestSelektovana.getSpecificniSimptomi();
+//					for(SpecificanSimptom s :setSpecSim) {
+//						sssTemp+=s+"\n";	
+//					}
+//					
+//				} catch (Exception e2) {
+//					// TODO: handle exception
+//				}
+//				
+//				HashSet<Simptomi> setSimp =bolestSelektovana.getSimptomi();
+//				for(Simptomi sSimp : setSimp) {
+//					sssTemp+=sSimp+"\n";
+//				}
 				
-				HashSet<Simptomi> setSimp =bolestSelektovana.getSimptomi();
-				for(Simptomi sSimp : setSimp) {
-					sssTemp+=sSimp+"\n";
-				}
+				KieSession kSessionQerry = kContainer.newKieSession("ksession-Querry");
+				kSessionQerry.getAgenda().getAgendaGroup("prikaziSimptomeNekeBolesti").setFocus();
+				kSessionQerry.setGlobal("prehlada", prehlada);
+				kSessionQerry.setGlobal("groznica", groznica);
+				kSessionQerry.setGlobal("upalaKrajnika", upalaKrajnika);
+				kSessionQerry.setGlobal("sinusnaInfekcija", sinusnaInfekcija);
+
+				kSessionQerry.setGlobal("dijabetes", dijabetes);
+				kSessionQerry.setGlobal("hipertenzija", hipertenzija);
+				kSessionQerry.setGlobal("hronicnaBubreznaBolest", hronicnaBubreznaBolest);
+				kSessionQerry.setGlobal("akutnaBubreznaBolest", akutnaBubreznaBolest);
+				kSessionQerry.insert(bolestSelektovana);
 				
-				JOptionPane.showMessageDialog(df, sssTemp, "Simptomi: "+bolestSelektovana.getNazivBolesti(), JOptionPane.YES_OPTION );
+				JTextArea taSimpomiZaOvuBolest = new JTextArea();
+				taSimpomiZaOvuBolest.setEditable(false);
+				kSessionQerry.insert(taSimpomiZaOvuBolest);
+				
+				kSessionQerry.fireAllRules();
+				//JOptionPane.showMessageDialog(df, sssTemp, "Simptomi: "+bolestSelektovana.getNazivBolesti(), JOptionPane.YES_OPTION );
+				JOptionPane.showMessageDialog(df, taSimpomiZaOvuBolest, "Simptomi: "+bolestSelektovana.getNazivBolesti(), JOptionPane.YES_OPTION );
 				
 			}
 		});
