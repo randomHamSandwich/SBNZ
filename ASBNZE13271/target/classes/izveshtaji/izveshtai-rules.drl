@@ -1,0 +1,385 @@
+//created on: May 23, 2019
+package com.sample
+import com.baske.model.*
+import javax.swing.JTextArea
+import java.util.List
+import java.time.LocalDate
+//list any import classes here.
+
+
+
+//declare any global variables here
+
+
+
+//Spisak pacijenata sa mogucim hronicim oboljenjima
+//Pacijent je u poslednje 2 godine bishe od 5 puta lecen od iste bolesti
+//bolset nije prehlada ili groznica
+
+
+
+
+rule "print 1"
+agenda-group "hronicni"
+salience  301
+	when	
+		$ta:JTextArea(  )
+	then
+		 $ta.setText($ta.getText()+
+    	 "Spisak pacijenata sa mogucmom hronicim upalom krajnika: \n");
+end
+
+rule "Spisak pacijenata sa mogucmom hronicim upalom krajnika"
+agenda-group "hronicni"
+salience 300
+    when
+    	$ta:JTextArea(  )
+    	$p: Pacient( $ter: terapije  ) and
+    	$n: Number(intValue >5) from accumulate(
+    	$pt:PrepisanaTerapija($bolest:bolest   ) from $ter and 
+    	Bolest( nazivBolesti == "upalaKrajnika" ) from $bolest,
+    	count($pt)
+    	)
+    then
+    	System.out.println("Pacijent sa hronicnom upalom krajnika: " + $p +"    " + $n);
+    	 $ta.setText($ta.getText()+"	"+$p+"\n");
+        //actions
+
+end
+
+rule "print 2"
+agenda-group "hronicni"
+salience  299
+	when	
+		$ta:JTextArea(  )
+	then
+		 $ta.setText($ta.getText()+
+    	 "Spisak pacijenata sa mogucmom hronicnom sinusnom infekcijom: \n");
+end
+
+rule "Spisak pacijenata sa mogucmom hronicnom sinusnom infekcijom"
+agenda-group "hronicni"
+salience  298
+    when
+    	$ta:JTextArea(  )
+        $p: Pacient( $ter: terapije  ) and
+    	$n: Number(intValue >5) from accumulate(
+    	$pt:PrepisanaTerapija($bolest:bolest   ) from $ter and 
+    	Bolest( nazivBolesti == "sinusnaInfekcija" ) from $bolest,
+    	count($pt)
+    	)
+    then
+        System.out.println("Pacijent sa mogucmom hronicnom sinusna infekcija: " + $p +"    " + $n);
+         $ta.setText($ta.getText()+"	"+$p+"\n");
+
+end
+rule "print 3"
+agenda-group "hronicni"
+salience  297
+	when	
+		$ta:JTextArea(  )
+	then
+		 $ta.setText($ta.getText()+
+    	 "Spisak pacijenata sa mogucmom hronicnom hipertenzijom: \n");
+   		 $ta.validate();
+ 		 $ta.repaint();
+end
+
+rule "Spisak pacijenata sa mogucmom hronicnom hipertenzijom"
+agenda-group "hronicni"
+salience 296
+    when
+   		$ta:JTextArea(  )
+        $p: Pacient( $ter: terapije  ) and
+    	$n: Number(intValue >5) from accumulate(
+    	$pt:PrepisanaTerapija($bolest:bolest   ) from $ter and 
+    	Bolest( nazivBolesti == "hipertenzija" ) from $bolest,
+    	count($pt)
+    	)
+    then
+        System.out.println("Pacijent sa  mogucmom hronicnom hipertenzijom: " + $p +"    " + $n);
+         $ta.setText($ta.getText()+"	"+$p+"\n");
+
+end
+
+rule "print 4"
+agenda-group "hronicni"
+salience  295
+	when	
+		$ta:JTextArea(  )
+	then
+		 $ta.setText($ta.getText()+
+    	 "Spisak pacijenata sa mogucmom hronicnom dijabetesom: \n");
+end
+
+rule "Spisak pacijenata sa mogucmom hronicnom dijabetesom"
+agenda-group "hronicni"
+salience  294
+    when
+    	$ta:JTextArea(  )
+        $p: Pacient( $ter: terapije  ) and
+    	$n: Number(intValue >5) from accumulate(
+    	$pt:PrepisanaTerapija($bolest:bolest   ) from $ter and 
+    	Bolest( nazivBolesti == "dijabetes" ) from $bolest,
+    	count($pt)
+    	)
+    then
+        System.out.println("Pacijent sa mogucmom hronicnom dijabetesom: " + $p +"    " + $n);
+        $ta.setText($ta.getText()+"	"+$p+"\n");
+
+end
+
+rule "print 5"
+agenda-group "hronicni"
+salience  293
+	when	
+		$ta:JTextArea(  )
+	then
+		 $ta.setText($ta.getText()+
+    	 "Spisak pacijenata sa mogucmom hronicnom hronicnom bubreznom bolesti: \n");
+end
+
+rule "Spisak acijenata sa mogucmom hronicnom hronicnom bubreznom bolesti"
+agenda-group "hronicni"
+salience  292
+    when
+    	$ta:JTextArea(  )
+        $p: Pacient( $ter: terapije  ) and
+    	$n: Number(intValue >5) from accumulate(
+    	$pt:PrepisanaTerapija($bolest:bolest   ) from $ter and 
+    	Bolest( nazivBolesti == "hronicnaBubreznaBolest" ) from $bolest,
+    	count($pt)
+    	)
+    then
+        System.out.println("Pacijent sa mogucmom hronicnom hronicnom bubreznom bolesti: " + $p +"    " + $n);
+        $ta.setText($ta.getText()+"	"+$p+"\n");
+
+end
+
+rule "print 6"
+agenda-group "hronicni"
+salience  292
+	when	
+		$ta:JTextArea(  )
+	then
+		 $ta.setText($ta.getText()+
+    	 "Spisak pacijenata sa mogucmom hronicnom akutnom bubreznom povredom: \n");
+end
+
+rule "Spisak pacijenata sa mogucmom hronicnom akutnom bubreznom povredom"
+salience  291
+agenda-group "hronicni"
+    when
+    	$ta:JTextArea(  )
+        $p: Pacient( $ter: terapije  ) and
+    	$n: Number(intValue >5) from accumulate(
+    	$pt:PrepisanaTerapija($bolest:bolest   ) from $ter and 
+    	Bolest( nazivBolesti == "akutnaBubreznaBolest" ) from $bolest,
+    	count($pt)
+    	)
+    then
+        System.out.println("Pacijent sa mogucmom hronicnom akutnom bubreznom povredom: " + $p +"    " + $n);
+        $ta.setText($ta.getText()+"	"+$p+"\n");
+
+end
+
+
+rule "Spisak pacijenata sa oslabljenim imunitetom print"
+salience  301
+agenda-group "osabljeniImunitet"
+	when $ta:JTextArea(  )
+	then $ta.setText($ta.getText()+"Spisak pacijenata sa oslabljenim imunitetom: \n");
+end
+
+rule "Spisak pacijenata sa oslabljenim imunitetom"
+salience  300
+agenda-group "osabljeniImunitet"
+	when
+		$ta:JTextArea(  )
+		$p: Pacient(  $ter: terapije )
+		//$pt2:PrepisanaTerapija($pre2 : prepisaniLekovi   )
+    	//from $ter   
+		
+		
+		//pacijent u poslednjih 12 meseci nije bolovao od bolesti za koju mu nisu prepisani antibiotici
+		//da su mu prepisanu antibiotici radi eval dole
+		$l : Long() from accumulate(
+			$pt:PrepisanaTerapija($pre : prepisaniLekovi  ,
+			datumPrepisaneTerapiej.isAfter(LocalDate.now().minusMonths(12))
+			 )	from $ter  and
+			 $lista:List(size >0) from collect ($lek:Lek(tipLeka.toString  =="ANTIBIOTIK") from $pre)
+			 ,count($pt)
+		 )
+		 	
+		 $lAll : Long() from accumulate(
+		 	$ptAll:PrepisanaTerapija($pre2 : prepisaniLekovi, 
+		 	datumPrepisaneTerapiej.isAfter(LocalDate.now().minusMonths(12))
+		 	) from $ter
+			,count($ptAll)
+		 )
+		 //da svaki put kada mu je prepisana terapija dobio je i antibiotik
+		 eval($l==$lAll)
+		 
+		 
+		 //pacijent je lecen vishe od 10 puta u poslednjih 12 meseci PREPISANI ANITBIOTICI
+		 //samo josh proveri dal ima barem 2 razlicite bolesti
+		 //mogao sam uslov i u Long()
+		 eval($l>10)
+		 	
+		 //pacijent je lecen vishe od 10 puta u poslednjih 12 meseci od barem 2 razlicite bolesti
+		 //za koje su mu prepisani antibiotici	
+		 
+		 //sve bolejsti u ovoj listi max 12 meseci stare
+		 $listL : List(  ) from accumulate( 
+		 $ptL :PrepisanaTerapija(  $bolest1: bolest,
+		 datumPrepisaneTerapiej.isAfter(LocalDate.now().minusMonths(12))) from $ter and
+		 b1: Bolest(  ) from $bolest1,
+		 collectList(b1)
+		 )
+		 
+		 //ako je number 0 onda je u svim terapijama prepisana jedna bolest ako nije onda 		
+		 //je prepisano nad vishe bolesti
+		 $number :Long() from accumulate(
+		 	$b1:Bolest() from $listL and
+		 	$b2:Bolest(this != $b1) from $listL ,
+		 	count($b2)
+		 )
+		 //mogao sam uslov i u Long()
+		 eval($number >0)
+		 
+		 
+		 	
+	then
+		//System.out.println("SSSSSSSSxxxxxxxxxxxxxxxxxxSSSSSSSSSSSSSSSSSSSSSSSSSSSS: " + $i);
+		//System.out.println("SSSSSSSSxxxxxxxxxxxxxxxxxxSSSSSSSSSSSSSSSSSSSSSSSSSSSS: " +$l);
+		System.out.println("SSSSSSSSxxxxxxxxxxxxxxxxxxSSSSSSSSSSSSSSSSSSSSSSSSSSSS: ima antibiotika U: "
+		 +$l +" od "+$lAll +" razliciteBolestiAkovisheOdNula: "+$number+"	\n"+ $listL +"\n");
+		//System.out.println("SSSSSSSSxxxxxxxxxxxxxxxxxxSSSSSSSSSSSSSSSSSSSSSSSSSSSS: "+$l);
+		$ta.setText($ta.getText()+ "	"+$p+"\n");
+end 
+
+rule "spisak mogucih zavisnika print"
+salience 301
+agenda-group "moguciZavisnici"
+when $ta:JTextArea(  )
+
+then $ta.setText($ta.getText()+"Spisak mogucih zavisnikm: \n");
+end
+
+//pacijentu su u poslednjih 6 meseci barem 6 puta prepisani anelgetici od strane 3 ili vishe 
+//razlicita lekara
+rule "spisak mogucih zavisnika"
+salience 300
+agenda-group "moguciZavisnici"
+	when 
+		$ta:JTextArea(  )
+		$p: Pacient(  $ter: terapije )
+		
+		
+		
+		$l : Long(intValue >5) from accumulate(
+			$pt:PrepisanaTerapija($pre : prepisaniLekovi  ,
+			datumPrepisaneTerapiej.isAfter(LocalDate.now().minusMonths(6))
+			 )	from $ter  and
+			 $lista:List(size >0) from collect ($lek:Lek(tipLeka.toString  =="ANELGETIK") from $pre)
+			 ,count($pt)
+		 )
+		 
+		 $listLekari : List(  ) from accumulate( 
+			 $ptL :PrepisanaTerapija( $lekar:lerarIliAdmin ,
+			 datumPrepisaneTerapiej.isAfter(LocalDate.now().minusMonths(6))) from $ter and
+			// b1: Bolest(  ) from $bolest1,
+			 o1:Osoba(  ) from $lekar,
+			 collectList(o1)
+		 )
+		 
+		 $number :Long(intValue >0) from accumulate(
+			 $o1:Osoba(  ) from $listLekari and
+			 $o2:Osoba(this != $o1) from $listLekari and
+			 $o3:Osoba(this != $o1 , this != $o2) from $listLekari ,
+			 count($o3)
+		 )
+		
+	then
+		System.out.println("pokrentut zavisnici " + $p);
+		$ta.setText($ta.getText()+ "	"+$p+"\n");
+end
+
+
+
+
+
+rule "Hellow rules"
+when Pacient(  )
+then		System.out.println("pokrentut asdnkjanjkasdjksdkasdbbasdjasdbkasdbkasdkasdbk");
+end
+
+rule "clear ta hronicna"
+agenda-group "hronicni"
+salience 1000
+enabled true
+	when	
+		$ta:JTextArea(  )
+	then	
+		$ta.setText("");	
+		System.out.println("clear t!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ");
+		
+end
+
+rule "remove ta from session hronicna"
+agenda-group "hronicni"
+salience -1000
+enabled true
+	when
+		 $ta:JTextArea(  )
+	then
+		 delete($ta);
+		 System.out.println("DELETED ");
+end
+
+
+rule "clear ta OsabljkenImunitet"
+agenda-group "osabljeniImunitet"
+salience 1000
+enabled true
+	when	
+		$ta:JTextArea(  )
+	then	
+		$ta.setText("");	
+		System.out.println("clear t!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ");
+		
+end
+
+rule "remove ta from session OslabljenImunitet"
+agenda-group "osabljeniImunitet"
+salience -1000
+enabled true
+	when
+		 $ta:JTextArea(  )
+	then
+		 delete($ta);
+		 System.out.println("DELETED ");
+end
+
+rule "clear ta zavisnici"
+agenda-group "moguciZavisnici"
+salience 1000
+enabled true
+	when	
+		$ta:JTextArea(  )
+	then	
+		$ta.setText("");	
+		System.out.println("clear t!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ");
+		
+end
+
+rule "remove ta from session zavisnici"
+agenda-group "moguciZavisnici"
+salience -1000
+enabled true
+	when
+		 $ta:JTextArea(  )
+	then
+		 delete($ta);
+		 System.out.println("DELETED ");
+end

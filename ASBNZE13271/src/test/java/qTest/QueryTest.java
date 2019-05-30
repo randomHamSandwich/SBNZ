@@ -7,6 +7,8 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
+import javax.swing.JTextArea;
+
 import org.junit.Test;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
@@ -64,67 +66,31 @@ public class QueryTest {
 		Bolest hronicnaBubreznaBolest = bolesti.getBolesti().get(6);
 		Bolest akutnaBubreznaBolest = bolesti.getBolesti().get(7);
 		
+		kSession.setGlobal("prehlada", prehlada);
+		kSession.setGlobal("groznica", groznica);
+		kSession.setGlobal("upalaKrajnika", upalaKrajnika);
+		kSession.setGlobal("sinusnaInfekcija", sinusnaInfekcija);
+
+		kSession.setGlobal("dijabetes", dijabetes);
+		kSession.setGlobal("hipertenzija", hipertenzija);
 		
-		System.out.println("prehada------------------------------------" + prehlada.getNazivBolesti());
-		for (Simptomi sss : prehlada.getSimptomi()) {
-			kSession.insert(new SimptomBolest(sss, prehlada));
-			System.out.println(sss);
-		}
-		System.out.println("groznica------------------------------------" + groznica.getNazivBolesti());
-		for (Simptomi sss : groznica.getSimptomi()) {
-			kSession.insert(new SimptomBolest(sss, groznica));
-			System.out.println(sss);
-		}
-		System.out.println("upalaKrajniksa------------------------------------" + upalaKrajnika.getNazivBolesti());
-		for (Simptomi sss : upalaKrajnika.getSimptomi()) {
-			System.out.println(sss);
-			kSession.insert(new SimptomBolest(sss, upalaKrajnika));
-		}
-		System.out.println("sinusna infekcija------------------------------------" + sinusnaInfekcija.getNazivBolesti());
-		for(Simptomi sss: sinusnaInfekcija.getSimptomi()) {
-			System.out.println(sss);
-			kSession.insert(new SimptomBolest(sss, sinusnaInfekcija));
-		}
+		kSession.setGlobal("hronicnaBubreznaBolest", hronicnaBubreznaBolest);
+		kSession.setGlobal("akutnaBubreznaBolest", akutnaBubreznaBolest);
 		
+		//TODO OBRISI OVO JE DA PROVERM DA LI RADI NA DRUGI NACIN PREKO SIMBOLESTNUMBER
+		kSession.insert(prehlada);
+		kSession.insert(groznica);
+		kSession.insert(upalaKrajnika);
+		kSession.insert(sinusnaInfekcija);
+
+		kSession.insert(dijabetes);
+		kSession.insert(hipertenzija);
 		
-		
-		
-		System.out.println("dijabetes------------------------------------" + dijabetes.getNazivBolesti());
-		for(Simptomi sss: dijabetes.getSimptomi()) {
-			System.out.println(sss);
-			kSession.insert(new SimptomBolest(sss, dijabetes));
-		}
-		System.out.println("hipertenzija------------------------------------" + hipertenzija.getNazivBolesti());
-		for(Simptomi sss: hipertenzija.getSimptomi()) {
-			System.out.println(sss);
-			kSession.insert(new SimptomBolest(sss, hipertenzija));
-		}
-		
-		
-		
-		System.out.println("hronicnaBubreznaBolest------------------------------------" + hronicnaBubreznaBolest.getNazivBolesti());
-		for(Simptomi sss: hronicnaBubreznaBolest.getSimptomi()) {
-			System.out.println(sss);
-			kSession.insert(new SimptomBolest(sss, hronicnaBubreznaBolest));
-		}
-		
-		System.out.println("hipertenzija------------------------------------" + akutnaBubreznaBolest.getNazivBolesti());
-		for(Simptomi sss: akutnaBubreznaBolest.getSimptomi()) {
-			System.out.println(sss);
-			kSession.insert(new SimptomBolest(sss, akutnaBubreznaBolest));
-		}
-		
-		
-		
+		kSession.insert(hronicnaBubreznaBolest);
+		kSession.insert(akutnaBubreznaBolest);
 
 		
-		
-//		kSession.insert(new SimptomBolest(s, prehlada));
-//		kSession.insert(new SimptomBolest(Simptomi.KASALJ, prehlada));
-//		kSession.insert(new SimptomBolest(Simptomi.GLAVOBOLJA, prehlada));
-//		kSession.insert(new SimptomBolest(Simptomi.BOL_U_GRLU,prehlada));
-//		kSession.insert(new SimptomBolest(Simptomi.c, prehlada));
-
+	
 		SimptomBolestNumber nPrehlda = new SimptomBolestNumber(prehlada, 0);
 		SimptomBolestNumber nGroznica = new SimptomBolestNumber(groznica, 0);
 		SimptomBolestNumber nUpalaKrajnika = new SimptomBolestNumber(upalaKrajnika, 0);
@@ -146,74 +112,98 @@ public class QueryTest {
 		
 		list.add(nHronicnaBubreznaBolest);
 		list.add(nAkutnaBubreznaBolest);
+		
+		
 		SimptomBolestList bl = new  SimptomBolestList(list);
 		
 		kSession.insert(bl);
 		
-		
-		kSession.insert(prehlada);
-		kSession.insert(groznica);
-		kSession.insert(upalaKrajnika);
-		kSession.insert(sinusnaInfekcija);
-		
-		kSession.insert(dijabetes);
-		kSession.insert(nHipertenzija);
-		
-		kSession.insert(hronicnaBubreznaBolest);
-		kSession.insert(akutnaBubreznaBolest);
-		
-		
-//		kSession.insert(nPrehlda);
-//		kSession.insert(nGroznica);
-//		kSession.insert(nUpalaKrajnika);
-//		kSession.insert(nSinusnaInfekcija);
-//		
-//		kSession.insert(nDijabetes);
-//		kSession.insert(nHipertenzija);
-//		
-//		kSession.insert(nHronicnaBubreznaBolest);
-//		kSession.insert(nAkutnaBubreznaBolest);
-//		
-		
-		
+		//prehlada
+//		kSession.insert(Simptomi.CURENJE_IZ_NOSA);
+//		kSession.insert(Simptomi.BOL_U_GRLU);
 //		kSession.insert(Simptomi.GLAVOBOLJA);
 //		kSession.insert(Simptomi.KIJANJE);
 //		kSession.insert(Simptomi.KASALJ);
+//		
+//		// groznica
+//		kSession.insert(Simptomi.KIJANJE);
 //		kSession.insert(Simptomi.BOL_U_GRLU);
+//		kSession.insert(Simptomi.KASALJ);
+//		kSession.insert(Simptomi.TEMPERATURA_VECA_OD_38);
 //		kSession.insert(Simptomi.CURENJE_IZ_NOSA);
+//		kSession.insert(Simptomi.GLAVOBOLJA);
+//		kSession.insert(Simptomi.DRHTAVICA);
+//		
+//		//upala krajnija
+//		kSession.insert(Simptomi.BOL_U_GRLU);
+//		kSession.insert(Simptomi.BOL_KOJI_SE_SIRI_OD_USIJU);
+//		kSession.insert(Simptomi.GLAVOBOLJA);
+//		kSession.insert(Simptomi.TEMPERATURA_OD_40_DO_41);
+//		kSession.insert(Simptomi.DRHTAVICA);
+//		kSession.insert(Simptomi.GUBITAK_APETITA);
+//		kSession.insert(Simptomi.UMOR);
+//		kSession.insert(Simptomi.ZUTI_SEKRET_IZ_NOSA);
+//		
+//		
+//		// sinusna infekcija
 //		kSession.insert(Simptomi.OTICANJE_OKO_OCIJU);
-		
-//		kSession.insert(Simptomi.DIJAREJA);
-//		kSession.insert(Simptomi.ZAMOR);
+//		kSession.insert(Simptomi.GLAVOBOLJA);
+//		kSession.insert(Simptomi.ZUTI_SEKRET_IZ_NOSA);
+//		kSession.insert(Simptomi.BOL_U_GRLU);
+//		kSession.insert(Simptomi.TEMPERATURA_VECA_OD_38);
+//		kSession.insert(Simptomi.KASALJ);
+//		kSession.insert(Simptomi.BOLOVANJE_OD_PREHLADE_ILI_GROZNICE_U_POSEDNJIH_60_DANA);
 //		
-		
-		kSession.insert(Simptomi.GLAVOBOLJA);
-		kSession.insert(Simptomi.GUBITAK_APETITA);
+//		
+//		
+//		//-------------------------------------------------------------------------------------
+//		//hipertenzija
+//		kSession.insert(Simptomi.U_POSLEDNJIH_6_MESECI_ZABELEZNO_BAREM_10_SLUCAJEVA_UKOJEM_JE_PACIJENT_IMAO_VISOK_PRITISAK);
+//		
+//		
+//		//dijabetes
+		kSession.insert(Simptomi.CESTO_URINIRANJE);
 		kSession.insert(Simptomi.GUBITAK_TELESNE_TEZINE);
-		kSession.insert(Simptomi.GUSENJE);
-		
-		kSession.insert(Simptomi.UMOR);
 		kSession.insert(Simptomi.ZAMOR);
-		
-		
-
-		
-//		ArrayList<Simptomi> s = new ArrayList<>();
-//		s.add(Simptomi.DIJAREJA);
-//		s.add(Simptomi.ZAMOR);
+		kSession.insert(Simptomi.MUCNINA_I_POVRACANJE);
 //		
-//		TODO obrishi ProbaQuerry
-//		ProbaQuerry pQ  = new ProbaQuerry(s);
+//		
+//		
+//		//-------------------------------------------------------------------------------------
+//		//hronicna bubrezna bolest
+//		kSession.insert(Simptomi.ZAMOR);
+//		kSession.insert(Simptomi.NOCTURIA);
+//		kSession.insert(Simptomi.OTOCI_NOGU_I_ZGLOBOVA);
+//		kSession.insert(Simptomi.GUSENJE);
+//		kSession.insert(Simptomi.BOL_U_GRUDIMA);
+//		
+//		//akutna bubrezna piovreda
+//		
+//		kSession.insert(Simptomi.ZAMOR);
+//		kSession.insert(Simptomi.GUSENJE);
+//		kSession.insert(Simptomi.OTOCI_NOGU_I_ZGLOBOVA);
+//		kSession.insert(Simptomi.DIJAREJA);
+		
+		kSession.insert(nPrehlda);
+		kSession.insert(nGroznica);
+		kSession.insert(nUpalaKrajnika);
+		kSession.insert(nSinusnaInfekcija);
+		
+		kSession.insert(nDijabetes);
+		kSession.insert(nHipertenzija);
+		
+		kSession.insert(nHronicnaBubreznaBolest);
+		kSession.insert(nAkutnaBubreznaBolest);
+		
+		
+		kSession.insert(new JTextArea());
+
+// TODO OBRISHI PROBAQUERRY
 //		ProbaQuerry pQ  = new ProbaQuerry(s);
 
-//		kSession.insert(pQ);
 		kSession.fireAllRules();
-//		System.out.println(nAkutnaBubreznaBolest);
-//		System.out.println(nHronicnaBubreznaBolest);
-//		System.out.println(nPrehlda);
-//		
-		///for()
 		
+
 	}
 
 }

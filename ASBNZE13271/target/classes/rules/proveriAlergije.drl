@@ -1,0 +1,60 @@
+//created on: May 7, 2019
+package dsads
+
+//list any import classes here.
+import com.baske.model.*
+import java.util.Set
+import java.util.List
+import java.time.LocalDate
+
+
+//declare any global variables here
+
+
+rule "Your First Rule"
+agenda-group "proveriAlergije"
+enabled false
+salience 100
+    when
+        $p: Pregled(  )
+        $l: Set( size >0)
+    then
+        System.out.println("set je xoooooooooooooooooooooo: "  + $l.size()+ " "+$l);
+        
+end
+
+rule "proveri sastojke iz leka"
+agenda-group "proveriAlergije"
+enabled false
+salience 50
+    when
+        $l: Set( size >0)
+        $p: Pregled( $pac :pacient  )
+        $pacient :Pacient(this ==$pac,  $aLek :alergijaNaLekove , $aSas: alergijanaSastojkeIzLeka  ) from $pac
+        //$temp : Set(size >0)from collect($sastojak
+        //)
+
+    then
+        System.out.println("set je xoooooooooooooooooooooo: "  + $l.size()+ " "+$l);
+        
+end
+
+//query isContainedIn(String x, String y )
+//	Set( x ,y )
+//	or
+//	(Set(z, y) and isContainedIn(x,z))
+	
+//end
+
+
+rule "reset"
+agenda-group "proveriAlergije"
+enabled false
+salience -1000
+    when
+        $p: Pregled(  )
+        $l: Set( )
+	then
+	delete($p);
+	delete($l);
+end

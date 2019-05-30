@@ -116,7 +116,8 @@ public class PrepisanaTerapija implements Serializable{
 	public boolean uPosednjihSestMesecBarDesetPutaVisokPritisak() {
 		if (datumPrepisaneTerapiej == null)
 			return false;
-		if (datumPrepisaneTerapiej.isAfter(LocalDate.now().minusMonths(6)) && visokPritisak) {
+//		if (datumPrepisaneTerapiej.isAfter(LocalDate.now().minusMonths(6)) && visokPritisak) {
+		if (datumPrepisaneTerapiej.isAfter(LocalDate.now().minusMonths(6)) ) {
 			return true;
 		} else {
 			return false;

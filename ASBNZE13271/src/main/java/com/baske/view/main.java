@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.kie.api.KieServices;
@@ -530,7 +531,7 @@ public class main {
 				
 			}
 		});
-		
+		//koje bolesti imaju ove simptome
 		df.getDualListBox().btnUpit.addActionListener(new ActionListener() {
 			
 			@Override
@@ -549,62 +550,88 @@ public class main {
 					}
 				}
 				
-				System.out.println("zateceno u chosenContentList: "+chosenContentList);
+				//System.out.println("zateceno u chosenContentList: "+chosenContentList);
 				
-				class C  {
-					ArrayList<InnerC> list = new ArrayList<>();
-					
-					boolean addB(String s) {
-						for (InnerC innerC : list) {
-							if(innerC.naziv.equals(s)) {
-								innerC.broj++;
-								return true;
-							}
-						}
-						return list.add(new InnerC(1, s));
-					}
-					void sort() {
-						Collections.sort(list,  Collections.reverseOrder());
-					}
-					
-					class InnerC  implements Comparable< InnerC >{
-						int broj;
-						String naziv;
-						public InnerC(int broj, String naziv) {
-							super();
-							this.broj = broj;
-							this.naziv = naziv;
-						}
-						@Override
-						public String toString() {
-							return "InnerC [broj=" + broj + ", naziv=" + naziv + "]";
-						}
-						@Override
-						public int compareTo(InnerC o) {
-							 return Integer.valueOf(this.broj).compareTo(Integer.valueOf(o.broj));
-						}
-						
-					}
-					
+//				class C  {
+//					ArrayList<InnerC> list = new ArrayList<>();
+//					
+//					boolean addB(String s) {
+//						for (InnerC innerC : list) {
+//							if(innerC.naziv.equals(s)) {
+//								innerC.broj++;
+//								return true;
+//							}
+//						}
+//						return list.add(new InnerC(1, s));
+//					}
+//					void sort() {
+//						Collections.sort(list,  Collections.reverseOrder());
+//					}
+//					
+//					class InnerC  implements Comparable< InnerC >{
+//						int broj;
+//						String naziv;
+//						public InnerC(int broj, String naziv) {
+//							super();
+//							this.broj = broj;
+//							this.naziv = naziv;
+//						}
+//						@Override
+//						public String toString() {
+//							return "InnerC [broj=" + broj + ", naziv=" + naziv + "]";
+//						}
+//						@Override
+//						public int compareTo(InnerC o) {
+//							 return Integer.valueOf(this.broj).compareTo(Integer.valueOf(o.broj));
+//						}
+//						
+//					}
+//					
+//				}
+//				
+//				C c = new C();
+//				for(Bolest bb : bolesti.getBolesti()) {
+//					int i =1;
+//					
+//					for(Simptomi sss : sIzabrani) {
+//						if(bb.getSimptomi().contains(sss)) {
+//							System.out.println("ngggggggg "+sss+"\n");
+//							c.addB(bb.getNazivBolesti());
+//						}
+//					}
+//				}
+//				c.sort();
+//				String sIspis ="";
+//				for(int i=0;i< c.list.size();i++) {
+//					sIspis+= "Bolest: "+c.list.get(i).naziv +"  ima simptoma: " +c.list.get(i).broj+"\n";
+//				}
+//				JOptionPane.showMessageDialog(df, sIspis, "Bolesti: ", JOptionPane.YES_OPTION );
+				KieSession kSessionQerry = kContainer.newKieSession("ksession-Querry");
+				kSessionQerry.setGlobal("prehlada", prehlada);
+				kSessionQerry.setGlobal("groznica", groznica);
+				kSessionQerry.setGlobal("upalaKrajnika", upalaKrajnika);
+				kSessionQerry.setGlobal("sinusnaInfekcija", sinusnaInfekcija);
+
+				kSessionQerry.setGlobal("dijabetes", dijabetes);
+				kSessionQerry.setGlobal("hipertenzija", hipertenzija);
+				kSessionQerry.setGlobal("hronicnaBubreznaBolest", hronicnaBubreznaBolest);
+				kSessionQerry.setGlobal("akutnaBubreznaBolest", akutnaBubreznaBolest);
+				
+				for(Simptomi sTempIzabrani : sIzabrani) {
+					kSessionQerry.insert(sTempIzabrani);
 				}
 				
-				C c = new C();
-				for(Bolest bb : bolesti.getBolesti()) {
-					int i =1;
-					
-					for(Simptomi sss : sIzabrani) {
-						if(bb.getSimptomi().contains(sss)) {
-							System.out.println("ngggggggg "+sss+"\n");
-							c.addB(bb.getNazivBolesti());
-						}
-					}
-				}
-				c.sort();
-				String sIspis ="";
-				for(int i=0;i< c.list.size();i++) {
-					sIspis+= "Bolest: "+c.list.get(i).naziv +"  ima simptoma: " +c.list.get(i).broj+"\n";
-				}
-				JOptionPane.showMessageDialog(df, sIspis, "Bolesti: ", JOptionPane.YES_OPTION );
+				
+				JTextArea taIspis = new JTextArea(); 
+				taIspis.setEditable(false);
+				kSessionQerry.insert(taIspis);
+				kSessionQerry.getAgenda().getAgendaGroup("SimpUBolestima").setFocus();
+				
+				
+				kSessionQerry.fireAllRules();
+				
+		
+				JOptionPane.showMessageDialog(df, taIspis, "Bolesti: ", JOptionPane.YES_OPTION );
 				
 			}
 		});

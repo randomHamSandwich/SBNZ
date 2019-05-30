@@ -1,0 +1,224 @@
+//created on: May 19, 2019
+package com.sample
+
+//list any import classes here.
+import javax.swing.JTextArea
+import java.util.List
+import com.baske.cep.*
+import com.baske.model.*
+import java.lang.Thread
+
+//declare any global variables here
+
+
+//UBRZANI SRCANI RITAM
+//u poslednih 10 secundi zabelezeno vishe od 25 otkucaja srca
+rule "Ubrzani srcani ritam "
+
+    when
+    	$ta:JTextArea(  )
+    	//$h1 : HeartBeatEvent()
+        $n: Number(intValue > 25) from accumulate (
+        //mozda bi najbolje bilo da stavim lenght 26 a sam heartbeat expires(10) sto bi ga cuvali 10 min
+        //	$h2: HeartBeatEvent()  over window:time(10s),
+        	$h2: HeartBeatEvent()  over window:length(26),
+        	
+        	count($h2)
+        	 
+   	   ) 
+    then
+         System.out.println("UBRZANI SRCANI RITAM\n u poslednih 10 secundi zabelezeno vishe od 25 otkucaja srca  ");
+         $ta.setText($ta.getText()+"UBRZANI SRCANI RITAM\n u poslednih 10 secundi zabelezeno vishe od 25 otkucaja srca  \n");
+         insert(new UbrzanSrcaniRtamEvent());
+
+end
+
+rule "zaustavi tread"
+enabled false
+salience -1001
+    when
+    	$t: Thread(  )
+        not(
+            HeartBeatEvent() 
+            over window:time(10s)
+        )
+    then
+    	System.out.println("thread HALT!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    	//$i.add("HALT, zaustavi monitoring");
+        //drools.halt();
+        $t.stop();
+end   
+
+rule "zaustavi monitoring TextArea"
+enabled true
+salience -1100
+    when
+    	//$i:IspisPacijentMonitoring(  )
+    	$ta : JTextArea(  )
+        not(
+            HeartBeatEvent() 
+            over window:time(10s)
+        )
+    then
+    	System.out.println("HALT!!!!!!!!!!!!!!!!!!!!!!!!!!! ovoga yea");
+    	//$i.add("HALT, zaustavi monitoring");
+    	$ta.setText($ta.getText()+"\nHALT, zaustavi monitoring");
+        drools.halt();
+        
+end   
+//HITNO POTREBNA DIJALIZA
+//pacijent boluje od hronicne bubrezne bolesti
+//u poslednjih 10 sekundi zabelezeno vishe od 10 otkucaja srca
+//suma kolicine mokrenja u posednjih 12 sati manja od 100 ml
+
+rule	"suma kolicine mokrenja u posednjih 12 sati manja od 100 ml"
+enabled false
+	when
+		$ta : JTextArea(  )
+		$n:Number(intValue <100) from accumulate(
+			//$m: MokrenjeEvent($k: kolicinaMili   )	over window:time(10s),
+			$m: MokrenjeEvent($k: kolicinaMili   )over window:time(12h),
+			sum($k) 
+		)
+	then
+		   System.out.println("suma kolicine mokrenja u posednjih 12 sati manja od 100 ml " +$n);
+		   insert(new SumaKolicineMokrenjaEvent());
+		   $ta.setText($ta.getText()+"\n");
+end
+
+
+rule	"suma kolicine mokrenja u posednjih 12 sati manja od 100 mlTWEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESTTTTTTTT"
+	when
+		$ta :JTextArea(  )
+		$n:Number(intValue <100) from accumulate(
+			//$m: MokrenjeEvent($k: kolicinaMili   )	over window:time(10s),
+			$m: MokrenjeEvent($k: kolicinaMili   )over window:time(12h),
+			sum($k) 
+		)
+	then
+		   System.out.println("suma kolicine mokrenja u posednjih 12 sati manja od 100 ml " +$n);
+		   $ta.setText($ta.getText()+"suma kolicine mokrenja u posednjih 12 sati manja od 100 ml 	" +$n);
+		   insert(new SumaKolicineMokrenjaEvent());
+end
+
+rule "sdaasdsdsd"
+	when 
+		$m:MokrenjeEvent()
+	then
+	 //System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ");
+	 
+end
+// hartbeat se cuva samo 10 sec
+rule 	"u poslednjih 10 sekundi zabelezeno vishe od 10 otkucaja srca"
+	when
+		Number(intValue >10) from accumulate(
+			$h : HeartBeatEvent(  )  over window:length(11),
+			count($h )
+		)
+	then
+		insert(new VisheOdDesetOtkucajaEvet());
+		System.out.println("u poslednjih 10 sekundi zabelezeno vishe od 10 otkucaja srca");
+end
+
+rule	"pacijent boluje od hronicne bubrezne bolesti"
+	when 
+		$p: Pacient(  $ter :terapije )
+		$l: List (size >0 ) from collect ($ppppp:PrepisanaTerapija( 
+		bolest.nazivBolesti =="hronicnaBubreznaBolest" 
+			)from $ter) 
+
+	then
+		insert(new HronicnaBubreznaBolestEvent());
+		System.out.println("pacijent boluje od hronicne bubrezne bolesti");
+end	
+
+
+rule "Potrebna dijaliza"
+salience -1
+	when 
+		$ta : JTextArea(  )
+		HronicnaBubreznaBolestEvent(  )
+		VisheOdDesetOtkucajaEvet(  )
+		HronicnaBubreznaBolestEvent(  )
+	then
+		System.out.println("HITNO POTREBNA DIJALIZA");
+		$ta.setText($ta.getText()+ "HITNO POTREBNA DIJALIZA  \n");
+		insert(new HitnoPotrebnaDijalizaEvent());
+end
+
+//PROBLEM SA KISEONIKOM
+//Nivo kisonika ukrvi pacijenta je manja od 70 mmHg
+//U poslednjijh 15 minuta nisu zabelezeni dogadjaji rasta nivoa kiseonika
+
+rule "Nivo kisonika ukrvi pacijenta je manja od 70 mmHg"
+	when
+		DisanjeEvent( $n: nivoKiseonikaUKrvi_mmHg <70) 
+	then
+		System.out.println("Nivo kisonika ukrvi pacijenta je manja od 70 mmHg  "+$n);
+		insert(new NivoKisonikaUKrviManjiEvenet());
+		
+end
+
+// zabelen RAST kisenika u krvi u poslednjih 15 min
+// zivotni vek DisanjeEventa je 15 min nemora over window:time(15m)) 
+rule "rast kisonika"
+	when 
+		$d1 : DisanjeEvent( $prethodni :nivoKiseonikaUKrvi_mmHg  )
+		$d2 : DisanjeEvent( 
+			this != $d1,
+			this after $d1,
+			nivoKiseonikaUKrvi_mmHg > $prethodni
+			) 
+	then
+		System.out.println("nivo kisonika RASTE");
+		System.out.println($d2.getNivoKiseonikaUKrvi_mmHg()+" "+$d1.getNivoKiseonikaUKrvi_mmHg()+"\n");
+		insert(new KiseonikRasteEvent());
+end
+
+//rule "U poslednjijh 15 minuta nisu zabelezeni dogadjaji rasta nivoa kiseonika"
+//	when
+//		$d1 : DisanjeEvent( $prethodni :nivoKiseonikaUKrvi_mmHg  )
+//		$d2 : DisanjeEvent( 
+//			this != $d1,
+//			this metby[15m] $d1,
+//			nivoKiseonikaUKrvi_mmHg < $prethodni
+//			)
+//	then
+//		System.out.println("U poslednjijh 15 minuta nisu zabelezeni dogadjaji rasta nivoa kiseonika tj opada ili stagnira");
+//		System.out.println($d1.getNivoKiseonikaUKrvi_mmHg() +"    " +$d2.getNivoKiseonikaUKrvi_mmHg()+"\n");
+//		insert(new NivoKiseonikaUKrviNeRasteEvent());
+//end
+
+
+rule "problem sa kiseonikom"
+salience -1
+	when
+		$ta: JTextArea(  )
+		//NivoKiseonikaUKrviNeRasteEvent(  )
+		not(KiseonikRasteEvent(  )over window:time(15m)) 
+		NivoKisonikaUKrviManjiEvenet(  )
+	then
+		System.out.println("PROBLEM SA KISEONIKOM");
+		$ta.setText($ta.getText()+"PROBLEM SA KISEONIKOM 	\n");
+		insert(new ProblemSaKiseonikomEvent());
+end
+
+rule	"remove nivo NivoKisonikaUKrviManjiEvenet"
+enabled true
+salience -10
+	when
+		$n : NivoKisonikaUKrviManjiEvenet(  )
+	then
+		delete($n);
+end
+
+rule	"remove nivo NivoKiseonikaUKrviNeRasteEvent"
+enabled true
+salience -10
+	when
+		$n : NivoKiseonikaUKrviNeRasteEvent(  )
+	then
+		delete($n);
+end
+
+
