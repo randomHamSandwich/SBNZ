@@ -4,6 +4,7 @@ import com.baske.model.*
 import javax.swing.JTextArea
 import java.util.List
 import java.time.LocalDate
+import java.util.Set
 //list any import classes here.
 
 
@@ -205,7 +206,7 @@ agenda-group "osabljeniImunitet"
 			 $lista:List(size >0) from collect ($lek:Lek(tipLeka.toString  =="ANTIBIOTIK") from $pre)
 			 ,count($pt)
 		 )
-		 	
+		 //sve prepisane terapije u poslednjih 12 meseci
 		 $lAll : Long() from accumulate(
 		 	$ptAll:PrepisanaTerapija($pre2 : prepisaniLekovi, 
 		 	datumPrepisaneTerapiej.isAfter(LocalDate.now().minusMonths(12))
@@ -221,35 +222,31 @@ agenda-group "osabljeniImunitet"
 		 //mogao sam uslov i u Long()
 		 eval($l>10)
 		 	
-		 //pacijent je lecen vishe od 10 puta u poslednjih 12 meseci od barem 2 razlicite bolesti
-		 //za koje su mu prepisani antibiotici	
+			
 		 
-		 //sve bolejsti u ovoj listi max 12 meseci stare
-		 $listL : List(  ) from accumulate( 
+		//barem 2 bolesti 
+		 $setS : Set( size>1 ) from accumulate( 
 		 $ptL :PrepisanaTerapija(  $bolest1: bolest,
 		 datumPrepisaneTerapiej.isAfter(LocalDate.now().minusMonths(12))) from $ter and
 		 b1: Bolest(  ) from $bolest1,
-		 collectList(b1)
+		 collectSet(b1)
 		 )
 		 
 		 //ako je number 0 onda je u svim terapijama prepisana jedna bolest ako nije onda 		
 		 //je prepisano nad vishe bolesti
-		 $number :Long() from accumulate(
-		 	$b1:Bolest() from $listL and
-		 	$b2:Bolest(this != $b1) from $listL ,
-		 	count($b2)
-		 )
+		// $number :Long() from accumulate(
+		 //	$b1:Bolest() from $listL and
+		 //	$b2:Bolest(this != $b1) from $listL ,
+		// 	count($b2)
+		// )
 		 //mogao sam uslov i u Long()
-		 eval($number >0)
+		 //eval($number >0)
 		 
 		 
 		 	
 	then
-		//System.out.println("SSSSSSSSxxxxxxxxxxxxxxxxxxSSSSSSSSSSSSSSSSSSSSSSSSSSSS: " + $i);
-		//System.out.println("SSSSSSSSxxxxxxxxxxxxxxxxxxSSSSSSSSSSSSSSSSSSSSSSSSSSSS: " +$l);
 		System.out.println("SSSSSSSSxxxxxxxxxxxxxxxxxxSSSSSSSSSSSSSSSSSSSSSSSSSSSS: ima antibiotika U: "
-		 +$l +" od "+$lAll +" razliciteBolestiAkovisheOdNula: "+$number+"	\n"+ $listL +"\n");
-		//System.out.println("SSSSSSSSxxxxxxxxxxxxxxxxxxSSSSSSSSSSSSSSSSSSSSSSSSSSSS: "+$l);
+		 +$l +" od "+$lAll +" razliciteBolestiAkovisheOdNula: "+$setS.size()+"	\n"+ $setS +"\n");
 		$ta.setText($ta.getText()+ "	"+$p+"\n");
 end 
 
@@ -280,20 +277,21 @@ agenda-group "moguciZavisnici"
 			 ,count($pt)
 		 )
 		 
-		 $listLekari : List(  ) from accumulate( 
+		 $setLekari : Set(  ) from accumulate( 
 			 $ptL :PrepisanaTerapija( $lekar:lerarIliAdmin ,
 			 datumPrepisaneTerapiej.isAfter(LocalDate.now().minusMonths(6))) from $ter and
-			// b1: Bolest(  ) from $bolest1,
 			 o1:Osoba(  ) from $lekar,
-			 collectList(o1)
+			 collectSet(o1)
 		 )
+	
+
+		// $number :Long(intValue >0) from accumulate(
+		//	 $o1:Osoba(  ) from $listLekari and
+		//	 $o2:Osoba(this != $o1) from $listLekari and
+		//	 $o3:Osoba(this != $o1 , this != $o2) from $listLekari ,
+		//	 count($o3)
+		// )
 		 
-		 $number :Long(intValue >0) from accumulate(
-			 $o1:Osoba(  ) from $listLekari and
-			 $o2:Osoba(this != $o1) from $listLekari and
-			 $o3:Osoba(this != $o1 , this != $o2) from $listLekari ,
-			 count($o3)
-		 )
 		
 	then
 		System.out.println("pokrentut zavisnici " + $p);
@@ -378,3 +376,4 @@ enabled true
 		 delete($ta);
 		 System.out.println("DELETED ");
 end
+

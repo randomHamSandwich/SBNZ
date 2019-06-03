@@ -19,13 +19,14 @@ import org.kie.api.KieServices;
 import org.kie.api.cdi.KSession;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.FactHandle;
 
 import com.baske.cep.DisanjeEvent;
 import com.baske.cep.HeartBeatEvent;
 import com.baske.model.IspisPacijentMonitoring;
 import com.baske.model.Pacient;
 
-public class MonitoringPacijentaDialog extends JDialog  {
+public class MonitoringPacijentaDialog extends JDialog {
 
 	private JTextArea taIspis;
 	private JTextField tfHeartBeat;
@@ -152,7 +153,7 @@ public class MonitoringPacijentaDialog extends JDialog  {
 							ks.insert(beep);
 							ks.insert(d);
 							tfHeartBeat.setText("" + 1 * n + " otkucaja u sec");
-							tfKiseonikUKrvi.setText("" +(75+kiseonik)+" mmHg kiseonika u krvi\n");
+							tfKiseonikUKrvi.setText("" + (75 + kiseonik) + " mmHg kiseonika u krvi\n");
 							try {
 								int a = (int) Math.round(1000 / n);
 								System.out.println(a);
@@ -274,16 +275,27 @@ public class MonitoringPacijentaDialog extends JDialog  {
 	}
 
 	// ako izadje na alt f4 ili X
-	public void stopTread() throws Exception{
+	public void stopTread() throws Exception {
 		// TODO Auto-generated method stub
-		if(thread.isAlive()) {
+		if (thread.isAlive()) {
 			thread.stop();
-			
+
 		}
 		ks.halt();
-		
+
 	}
 
-
+	// dodao
+	public void deleteAllFactHandles() {
+		if (!ks.getFactHandles().isEmpty()) {
+			for (FactHandle f : ks.getFactHandles()) {
+				ks.delete(f);
+				System.out.println("Deleting FactHandle " + f.toString());
+			}
+		}else {
+			System.out.println("FactHandles is EMPTY!!!!");
+		}
+		ks.halt();
+	}
 
 }

@@ -1,8 +1,5 @@
 package com.baske.view;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,29 +9,24 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import org.apache.commons.collections4.SplitMapUtils;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.FactHandle;
 
-import com.baske.cep.HeartBeatEvent;
-import com.baske.cep.MokrenjeEvent;
 import com.baske.model.Admin;
 import com.baske.model.Administratori;
 import com.baske.model.AlergicanPac;
 import com.baske.model.Bolest;
 import com.baske.model.Bolesti;
-import com.baske.model.IspisPacijentMonitoring;
 import com.baske.model.Lek;
 import com.baske.model.Lekari;
 import com.baske.model.Lekovi;
@@ -47,9 +39,6 @@ import com.baske.model.PrepisanaTerapija;
 import com.baske.model.SastojakLeka;
 import com.baske.model.Simptomi;
 import com.baske.model.SpecificanSimptom;
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-import com.sun.crypto.provider.AESParameters;
-import java.util.Collections;
 
 public class main {
 	public static Lekovi lekovi;
@@ -243,6 +232,22 @@ public class main {
 		kSessionProveriAlergije.setGlobal(lekovi.getLekovi().get(0).getNaziv(), lekovi.getLekovi().get(0));
 		kSessionProveriAlergije.setGlobal(lekovi.getLekovi().get(1).getNaziv(), lekovi.getLekovi().get(1));
 		kSessionProveriAlergije.setGlobal(lekovi.getLekovi().get(2).getNaziv(), lekovi.getLekovi().get(2));
+		
+		KieSession ksessionMonitoringPacijenta = kContainer.newKieSession("cepConfigKsessionRealtimeClock");
+		
+		KieSession kSessionQerry = kContainer.newKieSession("ksession-Querry");
+		kSessionQerry.getAgenda().getAgendaGroup("prikaziSimptomeNekeBolesti").setFocus();
+		kSessionQerry.setGlobal("prehlada", prehlada);
+		kSessionQerry.setGlobal("groznica", groznica);
+		kSessionQerry.setGlobal("upalaKrajnika", upalaKrajnika);
+		kSessionQerry.setGlobal("sinusnaInfekcija", sinusnaInfekcija);
+
+		kSessionQerry.setGlobal("dijabetes", dijabetes);
+		kSessionQerry.setGlobal("hipertenzija", hipertenzija);
+		kSessionQerry.setGlobal("hronicnaBubreznaBolest", hronicnaBubreznaBolest);
+		kSessionQerry.setGlobal("akutnaBubreznaBolest", akutnaBubreznaBolest);
+		
+		KieSession kSessionIzvestaji = kContainer.newKieSession("ksession-rulesIzveshtaji");
 
 		df.getDualListBox().getPrintChosenContent().addActionListener(new ActionListener() {
 
@@ -452,7 +457,6 @@ public class main {
 						df.getBtnDodajPrepisiTerapiju().setEnabled(!daLiJeAlergican.isAlergican());
 						
 						
-						
 						//TODO ako nema problema omoguci ubacivanje 
 //						HashSet<Lek> selektovaniPacAlergijeNaLekove =pacijentSelektovan.getAlergijaNaLekove();
 //						HashSet<String> selektovanPacAlergijeNaSastojke =pacijentSelektovan.getAlergijanaSastojkeIzLeka();
@@ -554,8 +558,8 @@ public class main {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				KieSession ksession111 = kContainer.newKieSession("cepConfigKsessionRealtimeClock");	
-				MonitoringPacijentaDialog d = new MonitoringPacijentaDialog(df, (Pacient) df.getCmbPacijent().getSelectedItem(), true, ksession111);
+	
+				MonitoringPacijentaDialog d = new MonitoringPacijentaDialog(df, (Pacient) df.getCmbPacijent().getSelectedItem(), true, ksessionMonitoringPacijenta);
 				d.addWindowListener( new WindowAdapter() {
 
 					@Override
@@ -570,6 +574,8 @@ public class main {
 							e1.printStackTrace();
 							System.out.println("stop hread exeption");
 						}
+						//obrishi sve cinjenice ovako jer moze da uradi alt f4 ili x
+						d.deleteAllFactHandles();
 					}
 
 
@@ -630,17 +636,19 @@ public class main {
 //					sssTemp+=sSimp+"\n";
 //				}
 				
-				KieSession kSessionQerry = kContainer.newKieSession("ksession-Querry");
+//				KieSession kSessionQerry = kContainer.newKieSession("ksession-Querry");
+//				kSessionQerry.getAgenda().getAgendaGroup("prikaziSimptomeNekeBolesti").setFocus();
+//				kSessionQerry.setGlobal("prehlada", prehlada);
+//				kSessionQerry.setGlobal("groznica", groznica);
+//				kSessionQerry.setGlobal("upalaKrajnika", upalaKrajnika);
+//				kSessionQerry.setGlobal("sinusnaInfekcija", sinusnaInfekcija);
+//
+//				kSessionQerry.setGlobal("dijabetes", dijabetes);
+//				kSessionQerry.setGlobal("hipertenzija", hipertenzija);
+//				kSessionQerry.setGlobal("hronicnaBubreznaBolest", hronicnaBubreznaBolest);
+//				kSessionQerry.setGlobal("akutnaBubreznaBolest", akutnaBubreznaBolest);
+				
 				kSessionQerry.getAgenda().getAgendaGroup("prikaziSimptomeNekeBolesti").setFocus();
-				kSessionQerry.setGlobal("prehlada", prehlada);
-				kSessionQerry.setGlobal("groznica", groznica);
-				kSessionQerry.setGlobal("upalaKrajnika", upalaKrajnika);
-				kSessionQerry.setGlobal("sinusnaInfekcija", sinusnaInfekcija);
-
-				kSessionQerry.setGlobal("dijabetes", dijabetes);
-				kSessionQerry.setGlobal("hipertenzija", hipertenzija);
-				kSessionQerry.setGlobal("hronicnaBubreznaBolest", hronicnaBubreznaBolest);
-				kSessionQerry.setGlobal("akutnaBubreznaBolest", akutnaBubreznaBolest);
 				kSessionQerry.insert(bolestSelektovana);
 				
 				JTextArea taSimpomiZaOvuBolest = new JTextArea();
@@ -672,7 +680,7 @@ public class main {
 					}
 				}
 				
-				//System.out.println("zateceno u chosenContentList: "+chosenContentList);
+//				//System.out.println("zateceno u chosenContentList: "+chosenContentList);
 				
 //				class C  {
 //					ArrayList<InnerC> list = new ArrayList<>();
@@ -728,16 +736,20 @@ public class main {
 //					sIspis+= "Bolest: "+c.list.get(i).naziv +"  ima simptoma: " +c.list.get(i).broj+"\n";
 //				}
 //				JOptionPane.showMessageDialog(df, sIspis, "Bolesti: ", JOptionPane.YES_OPTION );
-				KieSession kSessionQerry = kContainer.newKieSession("ksession-Querry");
-				kSessionQerry.setGlobal("prehlada", prehlada);
-				kSessionQerry.setGlobal("groznica", groznica);
-				kSessionQerry.setGlobal("upalaKrajnika", upalaKrajnika);
-				kSessionQerry.setGlobal("sinusnaInfekcija", sinusnaInfekcija);
-
-				kSessionQerry.setGlobal("dijabetes", dijabetes);
-				kSessionQerry.setGlobal("hipertenzija", hipertenzija);
-				kSessionQerry.setGlobal("hronicnaBubreznaBolest", hronicnaBubreznaBolest);
-				kSessionQerry.setGlobal("akutnaBubreznaBolest", akutnaBubreznaBolest);
+				
+				
+				
+				
+//				KieSession kSessionQerry = kContainer.newKieSession("ksession-Querry");
+//				kSessionQerry.setGlobal("prehlada", prehlada);
+//				kSessionQerry.setGlobal("groznica", groznica);
+//				kSessionQerry.setGlobal("upalaKrajnika", upalaKrajnika);
+//				kSessionQerry.setGlobal("sinusnaInfekcija", sinusnaInfekcija);
+//
+//				kSessionQerry.setGlobal("dijabetes", dijabetes);
+//				kSessionQerry.setGlobal("hipertenzija", hipertenzija);
+//				kSessionQerry.setGlobal("hronicnaBubreznaBolest", hronicnaBubreznaBolest);
+//				kSessionQerry.setGlobal("akutnaBubreznaBolest", akutnaBubreznaBolest);
 				
 				for(Simptomi sTempIzabrani : sIzabrani) {
 					kSessionQerry.insert(sTempIzabrani);
@@ -766,14 +778,35 @@ public class main {
 				// TODO Auto-generated method stub
 
 				
-				KieSession kSessionIzvestaji = kContainer.newKieSession("ksession-rulesIzveshtaji");
+//				KieSession kSessionIzvestaji = kContainer.newKieSession("ksession-rulesIzveshtaji");
 				
 				ArrayList<Pacient> pTemp = pacijenti.getPacijenti();
 				for(Pacient ppp : pTemp) {
 					kSessionIzvestaji.insert(ppp);
 				}
 				IzveshtanjiDialog iDialog = new IzveshtanjiDialog(df,kSessionIzvestaji,true);
-				
+				iDialog.addWindowListener(new WindowAdapter() {
+
+					@Override
+					public void windowDeactivated(WindowEvent e) {
+						// TODO Auto-generated method stub
+						super.windowDeactivated(e);
+						System.out.println("ako je izasho alt f4 ili x obrishi sve Faktove ako je nesto ostalo");
+						
+						if(!kSessionIzvestaji.getFactHandles().isEmpty()) {
+							for(FactHandle f: kSessionIzvestaji.getFactHandles()) {
+								System.out.println("deleted Facthandle" + f);
+								kSessionIzvestaji.delete(f);
+								
+							}
+						}
+						
+					
+						
+					}
+					
+					
+				});
 			}
 		});
 		

@@ -173,9 +173,9 @@ public class UbaciPodatke {
 		Lekar lekar2 = new Lekar("Laktomir", "Lemic", "l2", "l2");
 		Lekar lekar3 = new Lekar("Laza" , "Mokic", "l3", "l3");
 		
-		PrepisanaTerapija terapijaTemp =new PrepisanaTerapija(groznica, null, null, LocalDate.now().minusWeeks(3), 43, true);
-		terapijaTemp.setLerarIliAdmin(lekar1);
-		pacient1.getTerapije().add(terapijaTemp);
+	//	PrepisanaTerapija terapijaTemp =new PrepisanaTerapija(groznica, null, null, LocalDate.now().minusWeeks(3), 43, true);
+	//	terapijaTemp.setLerarIliAdmin(lekar1);
+	//	pacient1.getTerapije().add(terapijaTemp);
 		
 		
 		try {

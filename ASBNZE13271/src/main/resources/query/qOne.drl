@@ -172,4 +172,36 @@ salience $sss.size()
 		//$ispis+="\nHronicnaBubreznaBolest  " +$sss.size();
 end
 
+//nema agenda group pozva se posel
+rule "obrishi ta"
+salience -10
+when
+	$ta:JTextArea(  )
+then
+	delete($ta);
+	System.out.println( "Obrisao ta" );
+end
+
+rule "obrishi selektovanu bolest"
+salience -10
+when
+	$b:Bolest(  )
+then
+	System.out.println( "Obrisao selektovanuBolest: "+ $b.getNazivBolesti() );
+	delete($b);
+	
+end
+
+
+rule "obrishi simptome"
+salience -10
+when
+	$s: Simptomi(  )
+then
+	System.out.println( "Obrisao selektovanuBolest: "+ $s);
+	delete($s);
+	
+end
+
+
 
