@@ -280,10 +280,21 @@ public class main {
 				Pacient pacijentSelektovan = (Pacient) df.getCmbPacijent().getSelectedItem();
 				Pregled p = new Pregled(pacijentSelektovan, sIzabrani, null, d,
 						df.getCustoPanel().getVisokPritisak().isSelected(), moguceBolesti);
+				
+				
+				
+				df.getTfPreporukaPrvaGrupa().setText("");
+				kSession.insert(df.getTfPreporukaPrvaGrupa());
+				
 				kSession.insert(p);
 				kSession.getAgenda().getAgendaGroup("prva").setFocus();
 				kSession.fireAllRules();
-				df.getTfPreporukaPrvaGrupa().setText(moguceBolesti.toString());
+			
+				df.getTfPreporukaPrvaGrupa().setText(df.getTfPreporukaPrvaGrupa().getText()+"	mogBol:"+moguceBolesti.toString());
+				
+				
+				
+				
 				// radio sam dispose ranije al sam napravio delete pravilo yea
 //				kSession.dispose();
 //				kSession.retract(kSession.getFactHandle(p));
@@ -294,12 +305,27 @@ public class main {
 				moguceBolestiDrugaGrupa(moguceBolesti);
 				p = new Pregled(pacijentSelektovan, sIzabrani, null, d,
 						df.getCustoPanel().getVisokPritisak().isSelected(), moguceBolesti);
+				
+				
+				
+				df.getTfPreporukaDrugaGrupa().setText("");
+				kSession.insert(df.getTfPreporukaDrugaGrupa());
+				
 				kSession.insert(p);
 				kSession.getAgenda().getAgendaGroup("druga").setFocus();
 				kSession.fireAllRules();
+				
+				
 				df.getTfPreporukaDrugaGrupa().setText(moguceBolesti.toString());
 
+				
+				
+				
+				
 				moguceBolestitrecaGrupa(moguceBolesti);
+				
+				kSession.insert(df.getTfPreporukaTrecaGrupa());
+				
 				HashSet<SpecificanSimptom> specificniSimptomi = new HashSet<>();
 				if (df.getCustoPanel().getOpeoravljaSeOdOperacije().isSelected()) {
 					specificniSimptomi.add(SpecificanSimptom.OPORAVLJA_SE_OD_OPERACIJE);

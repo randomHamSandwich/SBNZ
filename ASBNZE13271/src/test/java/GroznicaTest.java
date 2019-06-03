@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.HashSet;
 
+import javax.swing.JTextField;
+
 import org.junit.Test;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
@@ -82,7 +84,11 @@ public class GroznicaTest {
 		kSession.setGlobal("groznica", groznica);
 		kSession.setGlobal("upalaKrajnika", upalaKrajnika);
 		kSession.setGlobal("sinusnaInfekcija", sinusnaInfekcija);
-
+		
+		JTextField tf = new JTextField();
+		kSession.insert(tf);
+		
+		kSession.insert(p);
 		kSession.insert(p);
 		kSession.getAgenda().getAgendaGroup("prva").setFocus();
 		kSession.fireAllRules();
@@ -138,15 +144,23 @@ public class GroznicaTest {
 		kSession.setGlobal("upalaKrajnika", upalaKrajnika);
 		kSession.setGlobal("sinusnaInfekcija", sinusnaInfekcija);
 
+		JTextField tf = new JTextField();
+		kSession.insert(tf);
+		
 		kSession.insert(p);
 		kSession.getAgenda().getAgendaGroup("prva").setFocus();
 		kSession.fireAllRules();
 
+	
+		
 		for (MogucaBolest mmm : moguceBolesti) {
 			if (mmm.getNaziv() == "groznica") {
 				assertEquals(1.0, mmm.getMogucnost());
 			}
 		}
+		assertEquals("Groznica 100.00%	Prehlada 100.00%	SinusnaInfekcija 57.14%	", tf.getText());
+		
+
 	}
 	 
 	 

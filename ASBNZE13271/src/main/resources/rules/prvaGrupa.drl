@@ -6,10 +6,11 @@ import com.baske.model.*
 import java.util.Set
 import java.util.List
 import java.time.LocalDate
-
+import javax.swing.JTextField
 //declare any global variables here
-global Bolest prehlada;
 global Bolest groznica;
+global Bolest prehlada;
+
 global Bolest upalaKrajnika;
 global Bolest sinusnaInfekcija;
 
@@ -23,11 +24,117 @@ agenda-group "prva"
 	 System.out.println("postoji  " + $set.size() + " pregled/a");
 end
 
+rule "upalaKrajnika moze biti"
+agenda-group "prva"
+//100 ili manji saliance  npr  svi simptomi 800/8=100 
+// jer kada smo imali 7.66=8 i 7.99=8 		a kada 76.6=77 i 79.9=80 
+salience Math.round(($sss.size()*100)/upalaKrajnika.getSimptomi().size())
+
+	when
+		$tf:JTextField(  )
+		//Pregled()
+		$p : Pregled( $sim :  simptomi,   $mogucaB : moguceBolesti) and
+		$sss : Set() from collect($s : Simptomi(
+			//this== Simptomi.BOL_U_GRLU ||
+			//this== Simptomi.BOL_KOJI_SE_SIRI_OD_USIJU ||
+			//this== Simptomi.GLAVOBOLJA ||
+			//this== Simptomi.TEMPERATURA_OD_40_DO_41 ||
+			//this== Simptomi.DRHTAVICA ||
+			//this== Simptomi.GUBITAK_APETITA ||
+			//this== Simptomi.UMOR ||
+			//this== Simptomi.ZUTI_SEKRET_IZ_NOSA
+			this memberOf  upalaKrajnika.getSimptomi()
+			
+		 ) from $sim) and
+		eval($sss.size() >=4) 
+		  $dajMiBolest : MogucaBolest(  naziv =="upalaKrajnika") from $mogucaB
+		
+	then
+	
+		System.out.println("moze biti upalaKrajnika    poklapa se: "  + $sss.size() +"/8 poklapanja "  +$sss.size()/8.0);
+		//$dajMiBolest.setMogucnost($sss.size()/8.0);
+		$dajMiBolest.setMogucnost($sss.size()/			(double)upalaKrajnika.getSimptomi().size());
+		System.out.println($p.getMoguceBolesti().toString()+"\n");
+			$tf.setText($tf.getText()+"UpalaKrajnika " +		String.format("%.2f",  ($sss.size()/(double)upalaKrajnika.getSimptomi().size())*100)+"%	") ;
+				System.out.println("UPALA KRAJNIKAAAAAAAAAAAAAAAAAAAA  " + Math.round(($sss.size()*100)/upalaKrajnika.getSimptomi().size()));
+		
+
+end
+
+rule "sinusnaInfekcija moze biti"
+agenda-group "prva"
+salience Math.round(($sss.size()*100)/sinusnaInfekcija.getSimptomi().size())
+
+	when
+		$tf:JTextField(  )
+		//Pregled()
+		$p : Pregled( $sim :  simptomi, $mogucaB : moguceBolesti   )  and
+		$sss : Set() from collect($s : Simptomi(
+			//this== Simptomi.OTICANJE_OKO_OCIJU ||
+			//this== Simptomi.GLAVOBOLJA ||
+			//this== Simptomi.ZUTI_SEKRET_IZ_NOSA ||
+			//this== Simptomi.BOL_U_GRLU ||
+			//this== Simptomi.TEMPERATURA_VECA_OD_38 ||
+			//this== Simptomi.KASALJ ||
+			//this== Simptomi.BOLOVANJE_OD_PREHLADE_ILI_GROZNICE_U_POSEDNJIH_60_DANA
+			this memberOf  sinusnaInfekcija.getSimptomi()
+			
+		 ) from $sim) and
+		eval($sss.size() >=4) 
+		$dajMiBolest : MogucaBolest(  naziv =="sinusnaInfekcija") from $mogucaB
+	then
+		System.out.println("moze biti sinusnaInfekcija    poklapa se: "  + $sss.size() +"/7 poklapanja "  +$sss.size()/7.0);
+
+//		$dajMiBolest.setMogucnost($sss.size()/7.0);
+		$dajMiBolest.setMogucnost($sss.size()/			(double)sinusnaInfekcija.getSimptomi().size());
+		System.out.println($p.getMoguceBolesti().toString()+"\n");
+					$tf.setText($tf.getText()+"SinusnaInfekcija " +		String.format("%.2f",  ($sss.size()/(double)sinusnaInfekcija.getSimptomi().size())*100)+"%	") ;
+	
+end
+
+rule "groznica moze biti"
+agenda-group "prva"
+
+salience Math.round(($sss.size()*100)/groznica.getSimptomi().size())
+	when
+		$tf:JTextField(  )
+		//Pregled()
+		$p : Pregled( $sim :  simptomi ,  $mogucaB : moguceBolesti) and
+		$sss : Set() from collect($s : Simptomi(
+			//this== Simptomi.KIJANJE ||
+			//this== Simptomi.BOL_U_GRLU ||
+			//this== Simptomi.KASALJ ||
+			//this== Simptomi.TEMPERATURA_VECA_OD_38 ||
+			//this== Simptomi.CURENJE_IZ_NOSA ||
+			//this== Simptomi.GLAVOBOLJA ||
+			//this== Simptomi.DRHTAVICA
+			this memberOf  groznica.getSimptomi()
+			
+		 ) from $sim) and
+		eval($sss.size() >=4) 
+		$dajMiBolest : MogucaBolest(  naziv =="groznica") from $mogucaB
+		
+	then
+	System.out.println("moze biti groznica    poklapa se: "  + $sss.size() +"/7 poklapanja "  +$sss.size()/7.0);
+
+	//$dajMiBolest.setMogucnost($sss.size()/7.0);
+	$dajMiBolest.setMogucnost($sss.size()/			(double)groznica.getSimptomi().size());
+	System.out.println($p.getMoguceBolesti().toString()+"\n");
+	$tf.setText($tf.getText()+"Groznica " +		String.format("%.2f",  ($sss.size()/(double)groznica.getSimptomi().size())*100)+"%	") ;
+	System.out.println("GROZNICAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA  " +Math.round(($sss.size()*100)/groznica.getSimptomi().size()));
+	
+
+end
+
+
 
 rule "prehlada moze biti"
 agenda-group "prva"
-salience 300
+//100 ili manji saliance  npr  svi simptomi 500/5=100 
+salience Math.round(($sss.size()*100)/prehlada.getSimptomi().size())
 	when
+		$tf:JTextField(  )
+		//Pregled()
 		$p : Pregled( $sim :  simptomi, $mogucaB : moguceBolesti  )  and
 		$sss : Set() from collect($s : Simptomi(
 //			this== Simptomi.CURENJE_IZ_NOSA ||
@@ -43,79 +150,31 @@ salience 300
 		$dajMiBolest : MogucaBolest(  naziv =="prehlada") from $mogucaB
 		
 	then
-		System.out.println("moze biti glavobolja    poklapa se: "  + $sss.size()+"/"+prehlada.getSimptomi().size()+ "  poklapanja "  +$sss.size()/prehlada.getSimptomi().size());
+		System.out.println("moze biti prehlada    poklapa se: "  + $sss.size()+"/"+prehlada.getSimptomi().size()+ "  poklapanja "  +$sss.size()/prehlada.getSimptomi().size());
 
 		//$dajMiBolest.setMogucnost($sss.size()/5.0);
-		//$dajMiBolest.setMogucnost($sss.size()/prehlada.getSimptomi().size());
-		$dajMiBolest.setMogucnost($sss.size()/5.0);
-		System.out.println($sss.size()+"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+		$dajMiBolest.setMogucnost($sss.size()/			(double)prehlada.getSimptomi().size());
 		System.out.println($p.getMoguceBolesti().toString()+"\n");
 
-end
-
-
-rule "groznica moze biti"
-agenda-group "prva"
-
-salience 300
-	when
-		$p : Pregled( $sim :  simptomi ,  $mogucaB : moguceBolesti) and
-		$sss : Set() from collect($s : Simptomi(
-			this== Simptomi.KIJANJE ||
-			this== Simptomi.BOL_U_GRLU ||
-			this== Simptomi.KASALJ ||
-			this== Simptomi.TEMPERATURA_VECA_OD_38 ||
-			this== Simptomi.CURENJE_IZ_NOSA ||
-			this== Simptomi.GLAVOBOLJA ||
-			this== Simptomi.DRHTAVICA
-			
-		 ) from $sim) and
-		eval($sss.size() >=4) 
-		$dajMiBolest : MogucaBolest(  naziv =="groznica") from $mogucaB
+		$tf.setText($tf.getText()+"Prehlada " +		String.format("%.2f",  ($sss.size()/(double)prehlada.getSimptomi().size())*100)+"%	") ;
 		
-	then
-	System.out.println("moze biti groznica    poklapa se: "  + $sss.size() +"/7 poklapanja "  +$sss.size()/7.0);
-
-	$dajMiBolest.setMogucnost($sss.size()/7.0);
-	System.out.println($p.getMoguceBolesti().toString()+"\n");
-	//$p.getMoguceBolesti().
-	
-
 end
 
-rule "upalaKrajnika moze biti"
-agenda-group "prva"
-salience 300
 
-	when
-		$p : Pregled( $sim :  simptomi,   $mogucaB : moguceBolesti) and
-		$sss : Set() from collect($s : Simptomi(
-			this== Simptomi.BOL_U_GRLU ||
-			this== Simptomi.BOL_KOJI_SE_SIRI_OD_USIJU ||
-			this== Simptomi.GLAVOBOLJA ||
-			this== Simptomi.TEMPERATURA_OD_40_DO_41 ||
-			this== Simptomi.DRHTAVICA ||
-			this== Simptomi.GUBITAK_APETITA ||
-			this== Simptomi.UMOR ||
-			this== Simptomi.ZUTI_SEKRET_IZ_NOSA
-			
-		 ) from $sim) and
-		eval($sss.size() >=4) 
-		  $dajMiBolest : MogucaBolest(  naziv =="upalaKrajnika") from $mogucaB
-		
-	then
-	
-		System.out.println("moze biti upalaKrajnika    poklapa se: "  + $sss.size() +"/8 poklapanja "  +$sss.size()/8.0);
-		$dajMiBolest.setMogucnost($sss.size()/8.0);
-	System.out.println($p.getMoguceBolesti().toString()+"\n");
 
-end
+
+
+
 
 rule "bolovanje od prehlada ili groznice u poslednjih 60 dana"
 agenda-group "prva"
-salience 330
+no-loop
+lock-on-active
+// da bude manje od 0 
+salience  -330
 
 	when
+		$tf :JTextField(  )
 		$p : Pregled($pac :pacient )
 		$pacient : Pacient( this == $pac, $ter:terapije  ) from $pac
 		$l: List (size >0 ) from collect ($ppppp:PrepisanaTerapija( 
@@ -125,85 +184,51 @@ salience 330
 
  	then
  		System.out.println("\npacijent je bolovao od prehlade ili groznice u poslednjih 6 meseci xxxxxxxxxxxxxxxYYYYYXXXXxxxxxxxxxxxxxxxx");
-		System.out.println("xXXXXXXXXXXXXXXXXXXXXYYYYXXXXxxxxxxxAAAAAAAAAAAxxxxxxxxxxXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		System.out.println($l);
-		System.out.println("xxxxxxxxxxxxxxxXXXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxx\n");
 		//dodaj da jeste pre 6 meseci bilo
 		$p.getSimptomi().add(Simptomi.BOLOVANJE_OD_PREHLADE_ILI_GROZNICE_U_POSEDNJIH_60_DANA);
-
-		
+		$tf.setText("");
+		update($p)
 end
 
 rule "temperatura veca od 38"
 agenda-group "prva"
-salience 330
+no-loop
+lock-on-active
+salience -330
 	when
+		$tf :JTextField(  )
 		$p : Pregled( $temp:temeratura  )
 		eval($temp>38.0)
 		
 	then
 		$p.getSimptomi().add(Simptomi.TEMPERATURA_VECA_OD_38);
-end
-
-rule "temperatura veca od 38 za terecu grupu jer treba"
-agenda-group "treca"
-salience 330
-	when
-		$p : Pregled( $temp:temeratura  )
-		eval($temp>38.0)
-		
-	then
-		$p.getSimptomi().add(Simptomi.TEMPERATURA_VECA_OD_38);
-		System.out.println("TEMEPERATURA JE VECA OD 38 TRECA GRUPA\n");
-		
+		$tf.setText("");
+		update($p)
 end
 
 rule "temperatura izmedju 40 i 41"
 agenda-group "prva"
-salience 330
+no-loop
+lock-on-active
+salience -330
 	when
+		$tf :JTextField(  )
 		$p : Pregled( $temp:temeratura  )
 		eval($temp>40.0)
 		eval($temp<41.0)
 		
 	then
+		
 		$p.getSimptomi().add(Simptomi.TEMPERATURA_OD_40_DO_41);
+		$tf.setText("");
+		update($p)
 end
-
-
-rule "sinusnaInfekcija moze biti"
-agenda-group "prva"
-salience 300
-
-	when
-		$p : Pregled( $sim :  simptomi, $mogucaB : moguceBolesti   )  and
-		$sss : Set() from collect($s : Simptomi(
-			this== Simptomi.OTICANJE_OKO_OCIJU ||
-			this== Simptomi.GLAVOBOLJA ||
-			this== Simptomi.ZUTI_SEKRET_IZ_NOSA ||
-			this== Simptomi.BOL_U_GRLU ||
-			this== Simptomi.TEMPERATURA_VECA_OD_38 ||
-			this== Simptomi.KASALJ ||
-			this== Simptomi.BOLOVANJE_OD_PREHLADE_ILI_GROZNICE_U_POSEDNJIH_60_DANA
-			
-			
-		 ) from $sim) and
-		eval($sss.size() >=4) 
-		$dajMiBolest : MogucaBolest(  naziv =="sinusnaInfekcija") from $mogucaB
-	then
-		System.out.println("moze biti sinusnaInfekcija    poklapa se: "  + $sss.size() +"/7 poklapanja "  +$sss.size()/7.0);
-	
-
-	$dajMiBolest.setMogucnost($sss.size()/7.0);
-	System.out.println($p.getMoguceBolesti().toString()+"\n");
-	
-end
-
 
 
 rule "nadji najbolu mogucnost"
 agenda-group "prva"
-salience 200
+salience -400
 	when
 		$p :Pregled( $mog : moguceBolesti    )
 		//$m : MogucaBolest(  ) from $mog
@@ -218,88 +243,18 @@ salience 200
 
 end
 
-//
-
-rule "da li je prehlada"
-agenda-group "prva"
-salience 105
-enabled false
-	when
-		$p: Pregled( $mog: moguceBolesti , $pro : najboljaProcenaBolesti  )
-		$s : List(size >0) from collect( $m : MogucaBolest( mogucnost == $pro && naziv == prehlada.getNazivBolesti()) from $mog
-		)
-	then
-
-		PrepisanaTerapija t = new PrepisanaTerapija(prehlada,null,null,null);
-		$p.getPacient().getTerapije().add(t);
-		
-			int temp = $p.getPacient().getTerapije().size();
-			System.out.println("\nbolest koja je izabrana je prehlada: \n"+$p.getPacient().getTerapije().
-			get(temp-1).getBolest().toString()+"\n");
-end
-
-rule "da li je groznica"
-agenda-group "prva"
-salience 107
-enabled false
-	when
-		$p: Pregled( $mog: moguceBolesti , $pro : najboljaProcenaBolesti  ) and
-		$s : List(size >0 ) from collect( $m : MogucaBolest( mogucnost == $pro && naziv == groznica.getNazivBolesti()) from $mog
-
-		)
-	then
-
-		PrepisanaTerapija t = new PrepisanaTerapija(groznica,null,null,null);
-		$p.getPacient().getTerapije().add(t);
-		
-			int temp = $p.getPacient().getTerapije().size();
-			System.out.println("\nbolest koja je izabrana je groznica: \n"+$p.getPacient().getTerapije().
-			get(temp-1).getBolest().toString()+"\n");
-end
-
-rule "da li je upalaKrajnika"
-agenda-group "prva"
-salience 108
-enabled false
-	when
-		$p: Pregled( $mog: moguceBolesti , $pro : najboljaProcenaBolesti  )
-		$s : List(size >0) from collect( $m : MogucaBolest( mogucnost == $pro && naziv == upalaKrajnika.getNazivBolesti()) from $mog
-		)
-	then
-
-		PrepisanaTerapija t = new PrepisanaTerapija(upalaKrajnika,null,null,LocalDate.now());
-		$p.getPacient().getTerapije().add(t);
-		
-			int temp = $p.getPacient().getTerapije().size();
-			System.out.println("\nBolest koja je izabrana je upalaKrajnika: \n"+$p.getPacient().getTerapije().
-			get(temp-1).getBolest().toString() +" vreme "
-			+ $p.getPacient().getTerapije().get(temp-1).getDatumPrepisaneTerapiej().toString()+"\n");
-end
-
-
-rule "da li je sinusnaInfekcija"
-agenda-group "prva"
-salience 107
-enabled false
-	when
-		$p: Pregled( $mog: moguceBolesti , $pro : najboljaProcenaBolesti  )
-		$s : List(size >0) from collect( $m : MogucaBolest( mogucnost == $pro && naziv == sinusnaInfekcija.getNazivBolesti()) from $mog
-		)
-	then
-
-		PrepisanaTerapija t = new PrepisanaTerapija(sinusnaInfekcija,null,null,null);
-		$p.getPacient().getTerapije().add(t);
-		
-			int temp = $p.getPacient().getTerapije().size();
-			System.out.println("\nbolest koja je izabrana je sinusnaInfekcija: \n"+$p.getPacient().getTerapije().
-			get(temp-1).getBolest().toString()+"\n");
-end
-
-
-rule "reset"
+rule "reset pregled"
 salience -1000
 	when
 		$p : Pregled(  )
 	then
 		delete($p);
+end
+
+rule "reset tf"
+salience -1000
+	when
+		$tf : JTextField(  )
+	then
+		delete($tf);
 end

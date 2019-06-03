@@ -2,6 +2,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashSet;
 
+import javax.swing.JTextField;
+
 import org.junit.Test;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
@@ -95,7 +97,8 @@ public class PrehladaTest {
 //     	Double najboljaProcena=-1.0;
 //     	kSession.setGlobal("najboljaProcena", najboljaProcena);
      	
-     	
+		JTextField tf = new JTextField();
+		kSession.insert(tf);
      	
          kSession.insert(p);
          kSession.getAgenda().getAgendaGroup("prva").setFocus();
@@ -189,7 +192,8 @@ public class PrehladaTest {
 //     	Double najboljaProcena=-1.0;
 //     	kSession.setGlobal("najboljaProcena", najboljaProcena);
      	
-     	
+		JTextField tf = new JTextField();
+		kSession.insert(tf);
      	
          kSession.insert(p);
          kSession.getAgenda().getAgendaGroup("prva").setFocus();
@@ -199,7 +203,10 @@ public class PrehladaTest {
 			if(mmm.getNaziv()=="prehlada") {
 				assertEquals(1.0, mmm.getMogucnost());
 			}
+			
+			assertEquals("Prehlada 100.00%	UpalaKrajnika 75.00%	Groznica 71.43%	SinusnaInfekcija 57.14%	", tf.getText());
 		}
+ 		
          
 	}
 

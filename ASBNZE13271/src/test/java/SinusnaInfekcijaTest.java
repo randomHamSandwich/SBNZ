@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.time.LocalDate;
 import java.util.HashSet;
 
+import javax.swing.JTextField;
+
 import org.junit.Test;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
@@ -70,11 +72,11 @@ public class SinusnaInfekcijaTest {
 		sTemp.add(Simptomi.GLAVOBOLJA);
 		sTemp.add(Simptomi.ZUTI_SEKRET_IZ_NOSA);
 		sTemp.add(Simptomi.BOL_U_GRLU);
-		sTemp.add(Simptomi.TEMPERATURA_VECA_OD_38);
+		//sTemp.add(Simptomi.TEMPERATURA_VECA_OD_38);
 		sTemp.add(Simptomi.KASALJ);
 		sTemp.add(Simptomi.KIJANJE);
 		//Pregled p = new Pregled(sTemp, null, moguceBolesti, pacient1);
-		Pregled p = new Pregled(pacient1, sTemp, null, 36, false, moguceBolesti);
+		Pregled p = new Pregled(pacient1, sTemp, null, 40, false, moguceBolesti);
 
 		// global za bolest
 		kSession.setGlobal("prehlada", prehlada);
@@ -85,6 +87,9 @@ public class SinusnaInfekcijaTest {
 //     	Double najboljaProcena=-1.0;
 //     	kSession.setGlobal("najboljaProcena", najboljaProcena);
 
+		JTextField tf = new JTextField();
+		kSession.insert(tf);
+		
 		kSession.insert(p);
 		kSession.getAgenda().getAgendaGroup("prva").setFocus();
 		kSession.fireAllRules();
@@ -165,10 +170,11 @@ public class SinusnaInfekcijaTest {
 		sTemp.add(Simptomi.GLAVOBOLJA);
 		sTemp.add(Simptomi.ZUTI_SEKRET_IZ_NOSA);
 		sTemp.add(Simptomi.BOL_U_GRLU);
-		sTemp.add(Simptomi.TEMPERATURA_VECA_OD_38);
+		//sTemp.add(Simptomi.TEMPERATURA_VECA_OD_38);
 		sTemp.add(Simptomi.KASALJ);
 		sTemp.add(Simptomi.KIJANJE);
 		Pregled p = new Pregled(sTemp, null, moguceBolesti, pacient1);
+		p.setTemeratura(40);
 
 		// global za bolest
 		kSession.setGlobal("prehlada", prehlada);
@@ -179,6 +185,9 @@ public class SinusnaInfekcijaTest {
 //     	Double najboljaProcena=-1.0;
 //     	kSession.setGlobal("najboljaProcena", najboljaProcena);
 
+		JTextField tf = new JTextField();
+		kSession.insert(tf);
+		
 		kSession.insert(p);
 		kSession.getAgenda().getAgendaGroup("prva").setFocus();
 		kSession.fireAllRules();
@@ -258,10 +267,11 @@ public class SinusnaInfekcijaTest {
 		sTemp.add(Simptomi.GLAVOBOLJA);
 		sTemp.add(Simptomi.ZUTI_SEKRET_IZ_NOSA);
 		sTemp.add(Simptomi.BOL_U_GRLU);
-		sTemp.add(Simptomi.TEMPERATURA_VECA_OD_38);
+		//sTemp.add(Simptomi.TEMPERATURA_VECA_OD_38);
 		sTemp.add(Simptomi.KASALJ);
 		sTemp.add(Simptomi.KIJANJE);
 		Pregled p = new Pregled(sTemp, null, moguceBolesti, pacient1);
+		p.setTemeratura(40);
 
 		// global za bolest
 		kSession.setGlobal("prehlada", prehlada);
@@ -272,6 +282,9 @@ public class SinusnaInfekcijaTest {
 //     	Double najboljaProcena=-1.0;
 //     	kSession.setGlobal("najboljaProcena", najboljaProcena);
 
+		JTextField tf = new JTextField();
+		kSession.insert(tf);
+		
 		kSession.insert(p);
 		kSession.getAgenda().getAgendaGroup("prva").setFocus();
 		kSession.fireAllRules();
@@ -280,6 +293,8 @@ public class SinusnaInfekcijaTest {
 			if(mmm.getNaziv()=="sinusnaInfekcija") {
 				assertEquals(1.0, mmm.getMogucnost());
 			}
+			
+		assertEquals("SinusnaInfekcija 100.00%	Prehlada 80.00%	Groznica 71.43%	", tf.getText());	
 		}
 	}
 

@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.HashSet;
 
+import javax.swing.JTextField;
+
 import org.junit.Test;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
@@ -59,7 +61,7 @@ public class UpalaKrajnikaTest {
 		sTemp.add(Simptomi.BOL_U_GRLU);
 		sTemp.add(Simptomi.BOL_KOJI_SE_SIRI_OD_USIJU);
 		sTemp.add(Simptomi.GLAVOBOLJA);
-		sTemp.add(Simptomi.TEMPERATURA_OD_40_DO_41);
+		//sTemp.add(Simptomi.TEMPERATURA_OD_40_DO_41);
 		sTemp.add(Simptomi.DRHTAVICA);
 		sTemp.add(Simptomi.GUBITAK_APETITA);
 		sTemp.add(Simptomi.UMOR);
@@ -68,7 +70,7 @@ public class UpalaKrajnikaTest {
 		sTemp.add(Simptomi.KASALJ);
 		sTemp.add(Simptomi.KIJANJE);
 		// Pregled p = new Pregled(sTemp, null, moguceBolesti, pacient1);
-		Pregled p = new Pregled(pacient1, sTemp, null, 66, true, moguceBolesti);
+		Pregled p = new Pregled(pacient1, sTemp, null, 40.1, true, moguceBolesti);
 
 		// global za bolest
 		kSession.setGlobal("prehlada", prehlada);
@@ -76,6 +78,9 @@ public class UpalaKrajnikaTest {
 		kSession.setGlobal("upalaKrajnika", upalaKrajnika);
 		kSession.setGlobal("sinusnaInfekcija", sinusnaInfekcija);
 
+		JTextField tf = new JTextField();
+		kSession.insert(tf);
+		
 		kSession.insert(p);
 		kSession.getAgenda().getAgendaGroup("prva").setFocus();
 		kSession.fireAllRules();
@@ -118,7 +123,7 @@ public class UpalaKrajnikaTest {
 		sTemp.add(Simptomi.BOL_U_GRLU);
 		sTemp.add(Simptomi.BOL_KOJI_SE_SIRI_OD_USIJU);
 		sTemp.add(Simptomi.GLAVOBOLJA);
-		sTemp.add(Simptomi.TEMPERATURA_OD_40_DO_41);
+		//sTemp.add(Simptomi.TEMPERATURA_OD_40_DO_41);
 		sTemp.add(Simptomi.DRHTAVICA);
 		sTemp.add(Simptomi.GUBITAK_APETITA);
 		sTemp.add(Simptomi.UMOR);
@@ -127,13 +132,16 @@ public class UpalaKrajnikaTest {
 		sTemp.add(Simptomi.KASALJ);
 		sTemp.add(Simptomi.KIJANJE);
 		// Pregled p = new Pregled(sTemp, null, moguceBolesti, pacient1);
-		Pregled p = new Pregled(pacient1, sTemp, null, 66, true, moguceBolesti);
+		Pregled p = new Pregled(pacient1, sTemp, null, 40.1, true, moguceBolesti);
 
 		// global za bolest
 		kSession.setGlobal("prehlada", prehlada);
 		kSession.setGlobal("groznica", groznica);
 		kSession.setGlobal("upalaKrajnika", upalaKrajnika);
 		kSession.setGlobal("sinusnaInfekcija", sinusnaInfekcija);
+		
+		JTextField tf = new JTextField();
+		kSession.insert(tf);
 
 		kSession.insert(p);
 		kSession.getAgenda().getAgendaGroup("prva").setFocus();
@@ -144,6 +152,8 @@ public class UpalaKrajnikaTest {
 				assertEquals(1.0, mmm.getMogucnost());
 			}
 		}
+		
+		assertEquals("UpalaKrajnika 100.00%	Groznica 85.71%	Prehlada 80.00%	SinusnaInfekcija 71.43%	", tf.getText());
 	}
 
 }

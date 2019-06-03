@@ -249,7 +249,7 @@ public class HronicnaBubreznaBolestTest {
 //		pacient1.getTerapije().add(new PrepisanaTerapija(dijabetes, null, null, LocalDate.now(), 35, false));
 
 		HashSet<Simptomi> sTemp = new HashSet<>(s5RegularniSimptomi);
-		sTemp.add(Simptomi.TEMPERATURA_OD_40_DO_41);
+		//sTemp.add(Simptomi.TEMPERATURA_OD_40_DO_41);
 		HashSet<SpecificanSimptom> sTempSpec = new HashSet<>();
 
 		Pregled p = new Pregled(sTemp, sTempSpec, moguceBolesti, pacient1);
@@ -378,7 +378,7 @@ public class HronicnaBubreznaBolestTest {
 //		pacient1.getTerapije().add(new PrepisanaTerapija(dijabetes, null, null, LocalDate.now(), 35, false));
 
 		HashSet<Simptomi> sTemp = new HashSet<>(s5RegularniSimptomi);
-		sTemp.add(Simptomi.TEMPERATURA_OD_40_DO_41);
+		//sTemp.add(Simptomi.TEMPERATURA_OD_40_DO_41);
 		HashSet<SpecificanSimptom> sTempSpec = new HashSet<>();
 
 		Pregled p = new Pregled(sTemp, sTempSpec, moguceBolesti, pacient1);
@@ -511,7 +511,7 @@ public class HronicnaBubreznaBolestTest {
 		//pacient1.getTerapije().add(new PrepisanaTerapija(dijabetes, null, null, LocalDate.now(), 35, false));
 
 		HashSet<Simptomi> sTemp = new HashSet<>(s5RegularniSimptomi);
-		sTemp.add(Simptomi.TEMPERATURA_OD_40_DO_41);
+		//sTemp.add(Simptomi.TEMPERATURA_OD_40_DO_41);
 		HashSet<SpecificanSimptom> sTempSpec = new HashSet<>();
 
 		Pregled p = new Pregled(sTemp, sTempSpec, moguceBolesti, pacient1);

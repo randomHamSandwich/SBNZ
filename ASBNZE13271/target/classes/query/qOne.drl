@@ -1,0 +1,175 @@
+//created on: May 28, 2019
+package com.baske
+import com.baske.model.*;
+import java.util.Set
+import java.util.List
+import com.sample.ProbaQuerry
+import javax.swing.JTextArea;
+
+//list any import classes here.
+//declare any global variables here
+global Bolest prehlada;
+global Bolest groznica;
+global Bolest upalaKrajnika;
+global Bolest sinusnaInfekcija;
+
+global Bolest dijabetes;
+global Bolest hipertenzija;
+
+global Bolest hronicnaBubreznaBolest;
+global Bolest akutnaBubreznaBolest;
+
+
+query isSimptomContainedInBolest(Simptomi simp, Bolest bolest)
+	SimptomBolest( simp, bolest; )
+	
+end
+
+rule "prikazi Specificne simp neke bolesti"
+salience 300
+agenda-group "prikaziSimptomeNekeBolesti"
+	when
+		$ta :JTextArea(  )
+		$b : Bolest( $simSpec :specificniSimptomi != null
+		 )
+	then
+		 System.out.println($simSpec);
+		 $ta.setText($ta.getText()+"Specificni simptomi "+$simSpec+"\n");
+end
+
+rule "prikazi sim neke bole"
+salience 200
+agenda-group "prikaziSimptomeNekeBolesti"
+	when
+		$ta :JTextArea(  )	
+		$b : Bolest( $sim:simptomi  )
+	then
+	 	System.out.println($sim);
+	 	 $ta.setText($ta.getText()+"Simptomi: "+$sim+"\n");
+end
+
+rule	"prehlada"
+agenda-group "SimpUBolestima"
+salience $sss.size()
+	when
+		$ta:JTextArea(  )
+		//$ispis:String()
+		$sss: Set( size >0) from collect(
+		Simptomi(  this memberOf prehlada.getSimptomi() ))
+		
+	then
+		System.out.println( " prehlada " +$sss.size());
+		$ta.setText($ta.getText()+"prehlada " +$sss.size()+"\n");
+		//$ispis+="\nPrehlada " +$sss.size();
+end
+
+rule	"groznica"
+agenda-group "SimpUBolestima"
+salience $sss.size()
+	when
+		$ta:JTextArea(  )
+		//$ispis:String()
+		$sss: Set(size >0 ) from collect(
+		Simptomi(  this memberOf groznica.getSimptomi() ))
+		
+	then
+		System.out.println( " groznica " +$sss.size());
+		$ta.setText($ta.getText()+"groznica " +$sss.size()+"\n");
+		//$ispis+="\nGroznica  " +$sss.size();
+	
+end
+
+rule	"upalaKrajnika"
+agenda-group "SimpUBolestima"
+salience $sss.size()
+	when
+		//$ispis:String()
+		$ta:JTextArea(  )
+		$sss: Set(size >0 ) from collect(
+		Simptomi(  this memberOf upalaKrajnika.getSimptomi() ))
+		
+	then
+		System.out.println( " upalaKrajnika " +$sss.size());
+		$ta.setText($ta.getText()+"upalaKrajnika " +$sss.size()+"\n");
+		//$ispis+="\nUpalaKrajnika " +$sss.size();
+end
+
+rule	"sinusnaInfekcija"
+agenda-group "SimpUBolestima"
+salience $sss.size()
+	when
+		$ta:JTextArea(  )
+		//$ispis:String()
+		$sss: Set(size >0 ) from collect(
+		Simptomi(  this memberOf sinusnaInfekcija.getSimptomi() ))
+		
+	then
+		System.out.println( " sinusnaIinfekcija " +$sss.size());
+		$ta.setText($ta.getText()+"sinusnaIinfekcija " +$sss.size()+"\n");
+		//$ispis+="\nSinusnaIinfekcija  " +$sss.size();
+end
+
+////////////////////////////////////////////////////////////druga
+rule	"dijabetes"
+agenda-group "SimpUBolestima"
+salience $sss.size()
+	when
+		//$ispis:String()
+		$ta:JTextArea(  )
+		$sss: Set(size >0 ) from collect(
+		Simptomi(  this memberOf dijabetes.getSimptomi() ))
+		
+	then
+		System.out.println( " dijabetes " +$sss.size());
+		$ta.setText($ta.getText()+"dijabetes " +$sss.size()+"\n");
+		//$ispis+="\nDijabetes  " +$sss.size();
+end
+
+rule	"hipertenzija"
+agenda-group "SimpUBolestima"
+salience $sss.size()
+	when
+		//$ispis:String()
+		$ta:JTextArea(  )
+		$sss: Set(size >0 ) from collect(
+		Simptomi(  this memberOf hipertenzija.getSimptomi() ))
+		
+	then
+		System.out.println( " hipertenzija " +$sss.size());
+		$ta.setText($ta.getText()+"hipertenzija " +$sss.size()+"\n");
+		//$ispis+="\nHipertenzija  " +$sss.size();
+end
+////////////////////////////////////treca
+
+rule	"hronicnaBubreznaBolest"
+agenda-group "SimpUBolestima"
+salience $sss.size()
+	when
+		//$ispis:String()
+		$ta:JTextArea(  )
+		$sss: Set(size >0 ) from collect(
+		Simptomi(  this memberOf hronicnaBubreznaBolest.getSimptomi() ))
+		
+	then
+		System.out.println( " hronicnaBubreznaBolest " +$sss.size());
+		$ta.setText($ta.getText()+"hronicnaBubreznaBolest " +$sss.size()+"\n");
+		//$ispis+="\nHronicnaBubreznaBolest  " +$sss.size();
+		
+end
+
+rule	"akutnaBubreznaBolest"
+agenda-group "SimpUBolestima"
+salience $sss.size()
+	when
+		$ta:JTextArea(  )
+		//$ispis:String()
+		$sss: Set(size >0 ) from collect(
+		Simptomi(  this memberOf akutnaBubreznaBolest.getSimptomi() ))
+		
+	then
+		System.out.println( " akutnaBubreznaBolest " +$sss.size());
+		$ta.setText($ta.getText()+"akutnaBubreznaBolest " +$sss.size()+"\n");
+		//$ispis+="\nHronicnaBubreznaBolest  " +$sss.size();
+end
+
+
