@@ -11,6 +11,10 @@
 		<kbase name="rulesQ" packages="query">
 		<ksession name="ksession-Querry" />
 	</kbase>
+	
+			<kbase name="rulesProveriAlergije" packages="alergije">
+		<ksession name="ksession-ProveriAlergije" />
+	</kbase>
 
 	<kbase name="cepConfigKbase" eventProcessingMode="stream"
 		packages="cep2">

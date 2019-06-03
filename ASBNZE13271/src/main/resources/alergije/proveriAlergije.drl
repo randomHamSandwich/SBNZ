@@ -1,0 +1,177 @@
+//created on: May 7, 2019
+package dsads
+
+//list any import classes here.
+import com.baske.model.*
+import java.util.Set
+import java.util.List
+import java.time.LocalDate
+import javax.swing.JTextArea
+
+
+//declare any global variables here
+global Lek Farin;
+global Lek Andol;
+global Lek Palitrex;
+
+rule "print"
+salience 340
+	when
+		$ta: JTextArea(  )
+	then
+		$ta.setText("Alergije na lekove \n");
+end
+
+rule "alergican na Farin"
+salience 330
+	when 
+		//prepisan je farin
+		$l :Lek( naziv =="Farin" )
+		$ta : JTextArea(  )
+		//alergican je na farin
+		$p: Pacient(  $alerLek: alergijaNaLekove ) and
+		$s: Set(size > 0) from collect($al : Lek(  
+				this.getNaziv() == Farin.getNaziv()
+			)
+		from $alerLek)
+		
+		$aPac : AlergicanPac()
+	then   
+		$aPac.setAlergican(true);
+	  	System.out.println("\nfarin pravolo pac"  + $p+ "\n" + $p.getAlergijaNaLekove()+"  "+ $p.getAlergijanaSastojkeIzLeka());
+	  	System.out.println($s+ "\n");
+	  
+	 	 $ta.setText($ta.getText()+"  "+Farin.getNaziv()+"\n");
+	
+	  
+end
+
+rule "Alergican na Andol"
+salience 320
+	when 
+		//prepisan je Andol
+		$l :Lek( naziv =="Andol" )
+		$ta : JTextArea(  )
+		//alergican je na andol
+		$p: Pacient(  $alerLek: alergijaNaLekove ) and
+		$s: Set(size > 0) from collect($al : Lek(  
+				this.getNaziv() == Andol.getNaziv()
+			)
+		from $alerLek)
+		
+		$aPac : AlergicanPac(  )
+	then   
+	  $aPac.setAlergican(true);
+	  System.out.println("Moj fensi pacijent"  + $p+ "\n" + $p.getAlergijaNaLekove()+"  "+ $p.getAlergijanaSastojkeIzLeka());
+	  $ta.setText($ta.getText()+"  "+Andol.getNaziv()+"\n");
+end
+
+rule "Alergican na Palitrex"
+salience 310
+	when 
+		//prepisan je Palitrex
+		$l : Lek( naziv == "Palitrex" )
+		$ta :JTextArea(  )
+		//alergican je na Palitrex
+		$p: Pacient(  $alerLek: alergijaNaLekove ) and
+		$s: Set(size > 0) from collect($al : Lek(  
+				this.getNaziv() == Palitrex.getNaziv()
+			)
+		from $alerLek)
+		
+		$aPac: AlergicanPac(  )
+	then   
+	  $aPac.setAlergican(true);
+	  System.out.println("Moj fensi pacijent"  + $p+ "\n" + $p.getAlergijaNaLekove()+"  "+ $p.getAlergijanaSastojkeIzLeka());
+	  $ta.setText($ta.getText()+"  "+Palitrex.getNaziv()+"\n");
+end
+
+rule	" print2"
+salience 300
+	when	
+		$ta:JTextArea(  )
+	then
+		$ta.setText($ta.getText()+"\n"+"Alergije na sastojke iz leka\n");
+end
+
+rule "alergican na sastojke lekova"
+salience 290
+	when
+		$sSastojciIZabrani : Set(  )
+		$ta : JTextArea(  )
+		$p : Pacient( $aleSastojci: alergijanaSastojkeIzLeka  ) and
+		$s: Set(Size>0) from collect($str : String(
+			this memberOf $sSastojciIZabrani
+		) from $aleSastojci)
+		
+		$aPac: AlergicanPac(  )
+	then
+		$aPac.setAlergican(true);
+		$ta.setText($ta.getText()+$s+"\n");
+		 System.out.println("_----------------_______________-_-----------------");
+	
+end
+
+
+
+
+
+
+
+
+rule "reset pac"
+salience -100
+	when
+		$p:Pacient(  )
+	then
+		  System.out.println("Obrisan je pacijent");
+		  delete($p);
+end
+
+rule "reset Alergican pac"
+salience -100
+	when
+		$aPac: AlergicanPac(  )
+	then
+		  System.out.println("Obrisan je aPac");
+		  delete($aPac);
+end
+
+rule "reset JTextArea"
+salience -100
+	when
+		$ta: JTextArea(  )
+	then
+		  System.out.println("Obrisan je textArea");
+		  delete($ta);
+end
+
+rule "reset selektovaniLekovi"
+salience -100
+	when
+		$l :Lek(  ) 
+	then
+		System.out.println("Obrisan je lek " + $l.getNaziv());
+		delete($l);
+end
+
+rule "reset ubaceneSastojkeLekova"
+salience -100
+	when
+		$s :SastojakLeka(  )
+	then
+		System.out.println("Obrisan je sastojakLeka" + $s);
+		delete($s);
+end
+
+rule "reset ubaceneSastojkeLekova SET"
+salience -100
+	when
+		$s :Set(  )
+	then
+		System.out.println("Obrisan je sastojakLeka" + $s);
+		delete($s);
+end
+
+
+

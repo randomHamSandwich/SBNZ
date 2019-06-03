@@ -11,14 +11,9 @@ import java.time.LocalDate
 //declare any global variables here
 
 
-
 //Spisak pacijenata sa mogucim hronicim oboljenjima
 //Pacijent je u poslednje 2 godine bishe od 5 puta lecen od iste bolesti
 //bolset nije prehlada ili groznica
-
-
-
-
 rule "print 1"
 agenda-group "hronicni"
 salience  301

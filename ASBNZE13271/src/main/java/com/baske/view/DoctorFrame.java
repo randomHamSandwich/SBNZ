@@ -523,7 +523,8 @@ public class DoctorFrame extends JFrame {
 		JPanel panelAlergijeNaLek = new JPanel();
 		panelAlergijeNaLek.setLayout(new BorderLayout());
 		panelAlergijeNaLek.add(new JLabel("Alergije na Lek"),BorderLayout.NORTH);
-		panelAlergijeNaLek.add(taAlergijeNaLek,BorderLayout.CENTER);
+		JScrollPane scrollPanelAlergijeNaLek = new JScrollPane(taAlergijeNaLek);
+		panelAlergijeNaLek.add(scrollPanelAlergijeNaLek,BorderLayout.CENTER);
 		
 		panelEast.add(panelAlergijeNaLek);
 //		add(tfError, BorderLayout.EAST);

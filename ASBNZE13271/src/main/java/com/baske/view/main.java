@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import org.apache.commons.collections4.SplitMapUtils;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -30,6 +31,7 @@ import com.baske.cep.HeartBeatEvent;
 import com.baske.cep.MokrenjeEvent;
 import com.baske.model.Admin;
 import com.baske.model.Administratori;
+import com.baske.model.AlergicanPac;
 import com.baske.model.Bolest;
 import com.baske.model.Bolesti;
 import com.baske.model.IspisPacijentMonitoring;
@@ -236,6 +238,11 @@ public class main {
 		kSession.setGlobal("hipertenzija", hipertenzija);
 		kSession.setGlobal("hronicnaBubreznaBolest", hronicnaBubreznaBolest);
 		kSession.setGlobal("akutnaBubreznaBolest", akutnaBubreznaBolest);
+		
+		KieSession kSessionProveriAlergije = kContainer.newKieSession("ksession-ProveriAlergije");
+		kSessionProveriAlergije.setGlobal(lekovi.getLekovi().get(0).getNaziv(), lekovi.getLekovi().get(0));
+		kSessionProveriAlergije.setGlobal(lekovi.getLekovi().get(1).getNaziv(), lekovi.getLekovi().get(1));
+		kSessionProveriAlergije.setGlobal(lekovi.getLekovi().get(2).getNaziv(), lekovi.getLekovi().get(2));
 
 		df.getDualListBox().getPrintChosenContent().addActionListener(new ActionListener() {
 
@@ -342,7 +349,7 @@ public class main {
 
 		df.getPrepisiTerapijuPanel().getDualListBoxPrepisaniLekovi().printChosenContent
 				.addActionListener(new ActionListener() {
-
+					//KieSession kSessionProveriAlergije = kContainer.newKieSession("ksession-ProveriAlergije");
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						// TODO Auto-generated method stub
@@ -362,25 +369,22 @@ public class main {
 						Pacient pacijentSelektovan = (Pacient) df.getCmbPacijent().getSelectedItem();
 						// nije nam bitno sta je izabrano od simptoma vec samo da li ima alergije na
 						// nesto
-						Pregled p = new Pregled(pacijentSelektovan, null, null, d, true, moguceBolesti);
-						kSession.insert(p);
+						//Pregled p = new Pregled(pacijentSelektovan, null, null, d, true, moguceBolesti);
+						//kSession.insert(p);
 
-						HashSet<String> lekoviList = new HashSet<>();
+						HashSet<String> nazivIzabranihLekovaSet = new HashSet<>();
 						for (int i = 0; i < df.getPrepisiTerapijuPanel().getDualListBoxPrepisaniLekovi().destList
 								.getModel().getSize(); i++) {
-							lekoviList.add(df.getPrepisiTerapijuPanel().getDualListBoxPrepisaniLekovi().destList
+							nazivIzabranihLekovaSet.add(df.getPrepisiTerapijuPanel().getDualListBoxPrepisaniLekovi().destList
 									.getModel().getElementAt(i).toString());
 						}
-
-						kSession.insert(lekoviList);
-						kSession.getAgenda().getAgendaGroup("proveriAlergije").setFocus();
-						kSession.fireAllRules();
-						
-						//TODO ako nema problema omoguci ubacivanje 
-						HashSet<Lek> selektovaniPacAlergijeNaLekove =pacijentSelektovan.getAlergijaNaLekove();
-						HashSet<String> selektovanPacAlergijeNaSastojke =pacijentSelektovan.getAlergijanaSastojkeIzLeka();
+						df.getTaAlergijeNaLek().setText("");
+						kSessionProveriAlergije.insert(pacijentSelektovan);
+					
+						kSessionProveriAlergije.insert(df.getTaAlergijeNaLek());
 						
 						
+						//izvlacenje leka iz destList
 						ArrayList<Lek> prepisaniLekoviLek = new ArrayList<>();
 						HashSet<String> prepisaniLekoviString = new HashSet<>();
 
@@ -397,32 +401,105 @@ public class main {
 								}
 							}
 						}
-						boolean alergicanNaLekIliSast = false;
-						String stringIspisiSastojke ="";
-						String stringIspisiLek="";
-						for(Lek l :prepisaniLekoviLek) {
-							for(Lek l2 : selektovaniPacAlergijeNaLekove) {
-								if(l2.getNaziv().equals(l.getNaziv())) {
-									alergicanNaLekIliSast = true;
-									stringIspisiLek+= l.getNaziv()+"\n";
-									df.getTaAlergijeNaLek().setText(stringIspisiLek);
-								}
-							}
-								
-							for(SastojakLeka sastojakLekas : l.getSastojci()) {
-								if(selektovanPacAlergijeNaSastojke.contains(sastojakLekas.toString())) {
-									stringIspisiSastojke+=sastojakLekas.toString()+" iz "+l.getNaziv()+"\n";
-									alergicanNaLekIliSast = true;
-									df.getTaAlergijeNaSastojak().setText(stringIspisiSastojke);
-								}
+						
+						if(!prepisaniLekoviLek.isEmpty()) {
+							for(Lek l : prepisaniLekoviLek) {
+								kSessionProveriAlergije.insert(l);
 							}
 						}
+						AlergicanPac daLiJeAlergican = new AlergicanPac(false);
+						//System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXX " + daLiJeAlergican.isAlergican());
+						kSessionProveriAlergije.insert(daLiJeAlergican);
+						
+						//sve  sastojke izabranih lekova na jedno mesto pa ubaci u ksession
+
+//						HashSet<SastojakLeka> sastojciIzabranihLekova = new HashSet<>();
+//						if(!prepisaniLekoviLek.isEmpty()) {
+//							for(Lek l : prepisaniLekoviLek) {
+//								for(SastojakLeka sastojakLekaTemp : l.getSastojci() ) {
+//									sastojciIzabranihLekova.add(sastojakLekaTemp);
+//								}
+//							}
+//						}
+//						
+						
+						//UMESTO SASTOJAKLEKA UBACUJE <STRING> zbog memberof
+						HashSet<String> sastojciIzabranihLekovaString = new HashSet<>();
+//						HashSet<SastojakLeka> sastojciIzabranihLekova = new HashSet<>();
+						if(!prepisaniLekoviLek.isEmpty()) {
+							for(Lek l : prepisaniLekoviLek) {
+								for(SastojakLeka sastojakLekaTemp : l.getSastojci() ) {
+									sastojciIzabranihLekovaString.add(sastojakLekaTemp.toString());
+								}
+							}
+						}						
+						
+						
+//						for(SastojakLeka sastojkUbaci : sastojciIzabranihLekova) {
+//							kSessionProveriAlergije.insert(sastojkUbaci);
+//						}
+						//kSessionProveriAlergije.insert(sastojciIzabranihLekova);
+						kSessionProveriAlergije.insert(sastojciIzabranihLekovaString);
 						
 						
 						
 						
 						
-						df.getBtnDodajPrepisiTerapiju().setEnabled(!alergicanNaLekIliSast);
+						kSessionProveriAlergije.getAgenda().getAgendaGroup("proveriAlergije").setFocus();
+						kSessionProveriAlergije.fireAllRules();
+						//System.out.println("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY " + daLiJeAlergican.isAlergican());
+						//ako nisi alergican onda dozvoli
+						df.getBtnDodajPrepisiTerapiju().setEnabled(!daLiJeAlergican.isAlergican());
+						
+						
+						
+						//TODO ako nema problema omoguci ubacivanje 
+//						HashSet<Lek> selektovaniPacAlergijeNaLekove =pacijentSelektovan.getAlergijaNaLekove();
+//						HashSet<String> selektovanPacAlergijeNaSastojke =pacijentSelektovan.getAlergijanaSastojkeIzLeka();
+//						
+//						
+//						ArrayList<Lek> prepisaniLekoviLek = new ArrayList<>();
+//						HashSet<String> prepisaniLekoviString = new HashSet<>();
+//
+//						for (int i = 0; i < df.getPrepisiTerapijuPanel().getDualListBoxPrepisaniLekovi().destList.getModel()
+//								.getSize(); i++) {
+//							prepisaniLekoviString.add(df.getPrepisiTerapijuPanel().getDualListBoxPrepisaniLekovi().destList
+//									.getModel().getElementAt(i).toString());
+//
+//						}
+//						for (Lek l : lekovi.getLekovi()) {
+//							for (String ssss : prepisaniLekoviString) {
+//								if (l.getNaziv().equals(ssss)) {
+//									prepisaniLekoviLek.add(l);
+//								}
+//							}
+//						}
+//						boolean alergicanNaLekIliSast = false;
+//						String stringIspisiSastojke ="";
+//						String stringIspisiLek="";
+//						for(Lek l :prepisaniLekoviLek) {
+//							for(Lek l2 : selektovaniPacAlergijeNaLekove) {
+//								if(l2.getNaziv().equals(l.getNaziv())) {
+//									alergicanNaLekIliSast = true;
+//									stringIspisiLek+= l.getNaziv()+"\n";
+//									df.getTaAlergijeNaLek().setText(stringIspisiLek);
+//								}
+//							}
+//								
+//							for(SastojakLeka sastojakLekas : l.getSastojci()) {
+//								if(selektovanPacAlergijeNaSastojke.contains(sastojakLekas.toString())) {
+//									stringIspisiSastojke+=sastojakLekas.toString()+" iz "+l.getNaziv()+"\n";
+//									alergicanNaLekIliSast = true;
+//									df.getTaAlergijeNaSastojak().setText(stringIspisiSastojke);
+//								}
+//							}
+//						}
+//						
+//						
+//						
+//						
+//						
+//						df.getBtnDodajPrepisiTerapiju().setEnabled(!alergicanNaLekIliSast);
 					}
 				});
 		
