@@ -277,7 +277,7 @@ agenda-group "moguciZavisnici"
 			 ,count($pt)
 		 )
 		 
-		 $setLekari : Set(  ) from accumulate( 
+		 $setLekari : Set( size>2 ) from accumulate( 
 			 $ptL :PrepisanaTerapija( $lekar:lerarIliAdmin ,
 			 datumPrepisaneTerapiej.isAfter(LocalDate.now().minusMonths(6))) from $ter and
 			 o1:Osoba(  ) from $lekar,

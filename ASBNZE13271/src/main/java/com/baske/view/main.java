@@ -754,13 +754,30 @@ public class main {
 				for(Simptomi sTempIzabrani : sIzabrani) {
 					kSessionQerry.insert(sTempIzabrani);
 				}
-				
-				
 				JTextArea taIspis = new JTextArea(); 
 				taIspis.setEditable(false);
 				kSessionQerry.insert(taIspis);
 				kSessionQerry.getAgenda().getAgendaGroup("SimpUBolestima").setFocus();
 				
+				
+				
+				Double d = -1.0;
+				String s = df.getCustoPanel().getCltf1().getTf().getText();
+				try {
+					d = Double.valueOf(s);
+					df.getTfError().setText("");
+				} catch (NumberFormatException nuberFormaTEXeption) {
+//			df.getTfError().setForeground(Color.RED);
+					df.getTfError().setText("Temperatura nije valdina");
+
+				}
+				Pregled p = new Pregled(null, null, null, d,
+						true, null);
+				kSessionQerry.insert(p);
+				
+				if (df.getCustoPanel().getOpeoravljaSeOdOperacije().isSelected()) {
+					kSessionQerry.insert(SpecificanSimptom.OPORAVLJA_SE_OD_OPERACIJE);
+				}
 				
 				kSessionQerry.fireAllRules();
 				
@@ -795,7 +812,7 @@ public class main {
 						
 						if(!kSessionIzvestaji.getFactHandles().isEmpty()) {
 							for(FactHandle f: kSessionIzvestaji.getFactHandles()) {
-								System.out.println("deleted Facthandle" + f);
+								System.out.println("deleted Facthandle");
 								kSessionIzvestaji.delete(f);
 								
 							}

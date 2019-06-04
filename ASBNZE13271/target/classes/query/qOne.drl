@@ -52,6 +52,7 @@ rule	"prehlada"
 agenda-group "SimpUBolestima"
 salience $sss.size()
 	when
+		Pregled(  )
 		$ta:JTextArea(  )
 		//$ispis:String()
 		$sss: Set( size >0) from collect(
@@ -67,6 +68,7 @@ rule	"groznica"
 agenda-group "SimpUBolestima"
 salience $sss.size()
 	when
+		Pregled(  )
 		$ta:JTextArea(  )
 		//$ispis:String()
 		$sss: Set(size >0 ) from collect(
@@ -83,6 +85,7 @@ rule	"upalaKrajnika"
 agenda-group "SimpUBolestima"
 salience $sss.size()
 	when
+		Pregled(  )
 		//$ispis:String()
 		$ta:JTextArea(  )
 		$sss: Set(size >0 ) from collect(
@@ -98,6 +101,7 @@ rule	"sinusnaInfekcija"
 agenda-group "SimpUBolestima"
 salience $sss.size()
 	when
+		Pregled(  )
 		$ta:JTextArea(  )
 		//$ispis:String()
 		$sss: Set(size >0 ) from collect(
@@ -114,6 +118,7 @@ rule	"dijabetes"
 agenda-group "SimpUBolestima"
 salience $sss.size()
 	when
+		Pregled(  )
 		//$ispis:String()
 		$ta:JTextArea(  )
 		$sss: Set(size >0 ) from collect(
@@ -129,6 +134,7 @@ rule	"hipertenzija"
 agenda-group "SimpUBolestima"
 salience $sss.size()
 	when
+		Pregled(  )
 		//$ispis:String()
 		$ta:JTextArea(  )
 		$sss: Set(size >0 ) from collect(
@@ -145,6 +151,7 @@ rule	"hronicnaBubreznaBolest"
 agenda-group "SimpUBolestima"
 salience $sss.size()
 	when
+		Pregled(  )
 		//$ispis:String()
 		$ta:JTextArea(  )
 		$sss: Set(size >0 ) from collect(
@@ -159,17 +166,54 @@ end
 
 rule	"akutnaBubreznaBolest"
 agenda-group "SimpUBolestima"
-salience $sss.size()
+salience $sss.size()+$specSss.size()
 	when
+		Pregled(  )
 		$ta:JTextArea(  )
 		//$ispis:String()
-		$sss: Set(size >0 ) from collect(
+		$sss: Set() from collect(
 		Simptomi(  this memberOf akutnaBubreznaBolest.getSimptomi() ))
+		$specSss: Set() from collect(SpecificanSimptom(  ))  
+		
+		eval($sss.size()+$specSss.size()>0)
 		
 	then
-		System.out.println( " akutnaBubreznaBolest " +$sss.size());
-		$ta.setText($ta.getText()+"akutnaBubreznaBolest " +$sss.size()+"\n");
-		//$ispis+="\nHronicnaBubreznaBolest  " +$sss.size();
+		System.out.println( " akutnaBubreznaBolest " +($sss.size()+$specSss.size()));
+		int i = ($sss.size()+$specSss.size());
+		//$ta.setText($ta.getText()+"akutnaBubreznaBolest " +($sss.size()+$specSss.size())+" "+ $specSss+"\n");
+		$ta.setText($ta.getText()+"akutnaBubreznaBolest " +i+"\n");
+end
+
+rule	"veca od 38"
+agenda-group "SimpUBolestima"
+salience -800
+no-loop
+lock-on-active
+	when
+		$ta: JTextArea(  )
+		$p:Pregled( temeratura >38 )
+	then
+	 	insert(Simptomi.TEMPERATURA_VECA_OD_38); 
+		System.out.println("8 UBACEn" ) ; 
+		$ta.setText("");
+		update($p);
+end
+
+rule	"izmedju 40 i  41"
+agenda-group "SimpUBolestima"
+salience -800
+no-loop
+lock-on-active
+	when
+		$ta: JTextArea(  )
+		$p:Pregled( $temp :temeratura )
+		eval($temp>40.0)
+		eval($temp<41.0)
+	then
+	 	insert(Simptomi.TEMPERATURA_OD_40_DO_41); 
+		System.out.println("8 UBACEn" ) ; 
+		$ta.setText("");
+		update($p);
 end
 
 //nema agenda group pozva se posel
@@ -202,6 +246,23 @@ then
 	delete($s);
 	
 end
+//oporvalja se od operacije simpto se samo dodaje ostali se rezonuju 
+rule "obrishi specificne simptome "
+salience -10
+when
+	$s: SpecificanSimptom(  )
+then
+	System.out.println( "Obrisao specifican simptom: "+ $s);
+	delete($s);
+	
+end
 
-
-
+rule "obrishi Pregled"
+salience -11
+when
+	$p: Pregled(  )
+then
+	System.out.println( "Obrisao selektovanuBolest: "+ $p);
+	delete($p);
+	
+end

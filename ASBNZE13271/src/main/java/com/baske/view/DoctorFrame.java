@@ -503,7 +503,7 @@ public class DoctorFrame extends JFrame {
 //		add(dualListBox, BorderLayout.CENTER);
 		add(panelPreporuke, BorderLayout.SOUTH);
 		JPanel panelEast = new JPanel();
-		panelEast.setLayout(new GridLayout(3, 1));
+		panelEast.setLayout(new GridLayout(2, 1));
 		taAlergijeNaLek = new JTextArea();
 		taAlergijeNaSastojak = new JTextArea();
 		taAlergijeNaSastojak.setEditable(false);
@@ -513,16 +513,18 @@ public class DoctorFrame extends JFrame {
 		
 		JPanel paneAlergijeNaSastojak = new JPanel();
 		paneAlergijeNaSastojak.setLayout(new BorderLayout());
+		
+		
 		paneAlergijeNaSastojak.add(new JLabel("Alergije na sastojak iz leka"), BorderLayout.NORTH);
 		//paneAlergijeNaSastojak.add()
 		JScrollPane scrollPaneAlergijeNaSastojak = new JScrollPane(taAlergijeNaSastojak);
 		paneAlergijeNaSastojak.add(scrollPaneAlergijeNaSastojak, BorderLayout.CENTER);
 		
-		panelEast.add(paneAlergijeNaSastojak);
+		//panelEast.add(paneAlergijeNaSastojak);
 		
 		JPanel panelAlergijeNaLek = new JPanel();
 		panelAlergijeNaLek.setLayout(new BorderLayout());
-		panelAlergijeNaLek.add(new JLabel("Alergije na Lek"),BorderLayout.NORTH);
+		panelAlergijeNaLek.add(new JLabel("Alergije"),BorderLayout.NORTH);
 		JScrollPane scrollPanelAlergijeNaLek = new JScrollPane(taAlergijeNaLek);
 		panelAlergijeNaLek.add(scrollPanelAlergijeNaLek,BorderLayout.CENTER);
 		
