@@ -23,6 +23,7 @@ import org.kie.api.runtime.rule.FactHandle;
 
 import com.baske.cep.DisanjeEvent;
 import com.baske.cep.HeartBeatEvent;
+import com.baske.cep.MokrenjeEvent;
 import com.baske.model.IspisPacijentMonitoring;
 import com.baske.model.Pacient;
 
@@ -147,6 +148,8 @@ public class MonitoringPacijentaDialog extends JDialog {
 
 					public void run() {
 //						for (int index = 0; index < 1500; index++) {
+						MokrenjeEvent m = new MokrenjeEvent(123);
+						ks.insert(m);
 						while (shouldBeat) {
 							HeartBeatEvent beep = new HeartBeatEvent();
 							DisanjeEvent d = new DisanjeEvent(75 + kiseonik);

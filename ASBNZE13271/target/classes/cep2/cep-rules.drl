@@ -86,18 +86,20 @@ enabled false
 		   $ta.setText($ta.getText()+"\n");
 end
 
-
+// samo gledam obrnuto ako SumaKolicineMokrenjaEvent ce biti 
+//kreiran ako je suma >=100  i onda samo not(SumaKolicineMokrenjaEvent) 
+//nemoram over window:time jer traje 12h sam event
 rule	"suma kolicine mokrenja u posednjih 12 sati manja od 100 mlTWEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESTTTTTTTT"
 	when
 		$ta :JTextArea(  )
-		$n:Number(intValue <100) from accumulate(
+		$n:Number(intValue >=100) from accumulate(
 			//$m: MokrenjeEvent($k: kolicinaMili   )	over window:time(10s),
 			$m: MokrenjeEvent($k: kolicinaMili   )over window:time(12h),
 			sum($k) 
 		)
 	then
-		   System.out.println("suma kolicine mokrenja u posednjih 12 sati manja od 100 ml " +$n);
-		   $ta.setText($ta.getText()+"suma kolicine mokrenja u posednjih 12 sati manja od 100 ml 	" +$n);
+		   System.out.println("suma kolicine mokrenja u posednjih 12 sati je VECA od 100 ml " +$n);
+		   //$ta.setText($ta.getText()+"suma kolicine mokrenja u posednjih 12 sati manja od 100 ml 	" +$n);
 		   insert(new SumaKolicineMokrenjaEvent());
 end
 
@@ -139,7 +141,10 @@ salience -1
 		$ta : JTextArea(  )
 		HronicnaBubreznaBolestEvent(  )
 		VisheOdDesetOtkucajaEvet(  )
-		HronicnaBubreznaBolestEvent(  )
+		not(
+			SumaKolicineMokrenjaEvent(  )
+		)
+		
 	then
 		System.out.println("HITNO POTREBNA DIJALIZA");
 		$ta.setText($ta.getText()+ "HITNO POTREBNA DIJALIZA  \n");
@@ -203,6 +208,8 @@ salience -1
 		insert(new ProblemSaKiseonikomEvent());
 end
 
+
+// ova 2 se ne koriste
 rule	"remove nivo NivoKisonikaUKrviManjiEvenet"
 enabled true
 salience -10

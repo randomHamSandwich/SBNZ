@@ -32,6 +32,53 @@ public class KolicinaMokraceuPoslednjihTest {
 	}
 	
 	@Test
+	public void proveriSumuRealTimeClockJESTE() {
+		KieServices ks = KieServices.Factory.get();
+		KieContainer kContainer = ks.getKieClasspathContainer();
+		KieSession ksession1 = kContainer.newKieSession("cepConfigKsessionRealtimeClock");
+		JTextArea ta = new JTextArea();
+		ksession1.insert(ta);
+
+		runRealtimeSumaJEste(ksession1);
+
+	}
+	
+	private void runRealtimeSumaJEste(KieSession ksession1) {
+			Thread t = new Thread() {
+				@Override
+				public void run() {
+					for (int index = 0; index < 4; index++) {
+						MokrenjeEvent m = new MokrenjeEvent(26);
+						ksession1.insert(m);
+						try {
+						Thread.sleep(1);
+							//Thread.sleep(500);
+						} catch (InterruptedException e) {
+							// do nothing
+						}
+					}
+				}
+			};
+			t.setDaemon(true);
+			t.start();
+			try {
+				// sleep promenio sa 200 jer je ishao paralelno sa main pa su pristizali novi eventovi
+				//pa je njih okidao, a trebao je samo poslednje a oni se nisu josh desili a koriscen je 
+				//ksession.fireUntilHalt();
+				Thread.sleep(2000);
+				System.out.println("sleeep ends");
+			} catch (InterruptedException e) {
+				// do nothing
+			}
+			ksession1.fireUntilHalt();
+//			ksession.fireAllRules();
+			Collection<?> newEvents = ksession1.getObjects(new ClassObjectFilter(SumaKolicineMokrenjaEvent.class));
+			// assertThat(newEvents.size(), equalTo(1));
+			assertEquals(1, newEvents.size());
+		}
+		
+
+	@Test
 	public void proveriSumuPseudoTimeClock() {
 		KieServices ks = KieServices.Factory.get();
 		KieContainer kContainer = ks.getKieClasspathContainer();
@@ -59,10 +106,10 @@ public class KolicinaMokraceuPoslednjihTest {
          ksession.fireAllRules();
          Collection<?> newEvents = ksession.getObjects(new ClassObjectFilter(SumaKolicineMokrenjaEvent.class));
          Collection<?> mokrenjeEvents = ksession.getObjects(new ClassObjectFilter(MokrenjeEvent.class));
-		assertEquals(1, newEvents.size());
+		assertEquals(0, newEvents.size());
 		assertEquals(2,mokrenjeEvents.size());
 	}
-
+	//24*4 =96
 	private void runRealtimeSuma(KieSession ksession) {
 		Thread t = new Thread() {
 			@Override
@@ -94,7 +141,9 @@ public class KolicinaMokraceuPoslednjihTest {
 //		ksession.fireAllRules();
 		Collection<?> newEvents = ksession.getObjects(new ClassObjectFilter(SumaKolicineMokrenjaEvent.class));
 		// assertThat(newEvents.size(), equalTo(1));
-		assertEquals(1, newEvents.size());
+		assertEquals(0, newEvents.size());
 	}
+	
+	
 	
 }

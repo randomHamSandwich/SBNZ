@@ -302,7 +302,8 @@ public class main {
 				kSession.getAgenda().getAgendaGroup("prva").setFocus();
 				kSession.fireAllRules();
 			
-				df.getTfPreporukaPrvaGrupa().setText(df.getTfPreporukaPrvaGrupa().getText()+"	mogBol:"+moguceBolesti.toString());
+				//za testiranje koristio 
+				//df.getTfPreporukaPrvaGrupa().setText(df.getTfPreporukaPrvaGrupa().getText()+"	mogBol:"+moguceBolesti.toString());
 				
 				
 				
@@ -520,6 +521,16 @@ public class main {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				df.getBtnDodajPrepisiTerapiju().setEnabled(false);
+				
+			}
+		});
+		
+		df.getPrepisiTerapijuPanel().getCmbBolesti().addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
 				df.getBtnDodajPrepisiTerapiju().setEnabled(false);
 				
 			}
